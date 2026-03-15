@@ -1,0 +1,235 @@
+{
+  "main": {
+    "id": "5ed29101a88d68be",
+    "type": "split",
+    "children": [
+      {
+        "id": "89344f8a2df1ecc6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "42759f44f9b2e190",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Plans/PLAN_EMAIL_19ce0a36_20260312_110345_20260312_110433.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "PLAN_EMAIL_19ce0a36_20260312_110345_20260312_110433"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "75febdde7e142faa",
+    "type": "split",
+    "children": [
+      {
+        "id": "3dc526dd75c1a1a9",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e638bfecb62cff3f",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "ce34aac89ed6d5cc",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "d69a3bed60b73825",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "0dbe722c4ce63608",
+    "type": "split",
+    "children": [
+      {
+        "id": "f18921a38d557fb6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e61a4ead07f5c01f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Done/FILE_invoice_urgent_20260227_234521_completed_20260227_234530.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for FILE_invoice_urgent_20260227_234521_completed_20260227_234530"
+            }
+          },
+          {
+            "id": "14c6f9b3dfd1e8b6",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Done/FILE_invoice_urgent_20260227_234521_completed_20260227_234530.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from FILE_invoice_urgent_20260227_234521_completed_20260227_234530"
+            }
+          },
+          {
+            "id": "7b3fd9e9eee7e387",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "a01ef0af1ad2de58",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "75e8878865290d86",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Done/FILE_invoice_urgent_20260227_234521_completed_20260227_234530.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of FILE_invoice_urgent_20260227_234521_completed_20260227_234530"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "42759f44f9b2e190",
+  "lastOpenFiles": [
+    "Pending_Approval/APPROVAL_email_20260315_150457.md",
+    "Plans/PLAN_EMAIL_partnership_test_20260315_150436.md",
+    "Dashboard.md",
+    "In_Progress/qwen_agent/EMAIL_partnership_test2.md",
+    "Pending_Approval/APPROVAL_email_20260315_130223.md",
+    "Plans/PLAN_EMAIL_partnership_test2_20260315_130204.md",
+    "Pending_Approval/APPROVAL_email_20260315_130125.md",
+    "Plans/PLAN_EMAIL_partnership_test_20260315_130110.md",
+    "Needs_Action/EMAIL_partnership_test2.md",
+    "Needs_Action/EMAIL_partnership_test.md",
+    "In_Progress/qwen_agent/EMAIL_partnership_test.md",
+    "Pending_Approval/APPROVAL_email_20260315_120540.md",
+    "Plans/PLAN_EMAIL_partnership_test_20260315_120516.md",
+    "Done/APPROVAL_email_20260315_113513_executed_20260315_113657.md",
+    "Pending_Approval/APPROVAL_email_20260315_113513.md",
+    "Approved/APPROVAL_email_20260315_113513.md",
+    "Needs_Action/EMAIL_19cf0230_20260315_111710.md",
+    "In_Progress/qwen_agent/EMAIL_19cf0230_20260315_111710.md",
+    "Plans/PLAN_EMAIL_19cf0230_20260315_111710_20260315_113455.md",
+    "Needs_Action/EMAIL_19cf01f6_20260315_111308.md",
+    "Needs_Action/EMAIL_19cf01f7_20260315_111308.md",
+    "Done/EMAIL_19cef69d_20260315_110706_completed_20260315_110934.md",
+    "Done/APPROVAL_email_20260312_103223_executed_20260312_103417.md",
+    "Done/APPROVAL_email_20260314_163649_executed_20260315_111158.md",
+    "Pending_Approval/APPROVAL_email_20260314_163649.md",
+    "Approved/APPROVAL_email_20260314_163649.md",
+    "Logs/2026-03-15.jsonl",
+    "Logs/2026-03-14.jsonl",
+    "Logs/2026-03-13.jsonl",
+    "Logs/watcher_GmailWatcher_2026-03-13.log",
+    "Logs/watcher_GmailWatcher_2026-03-12.log",
+    "Logs/2026-03-12.jsonl",
+    "Logs/watcher_GmailWatcher_2026-03-11.log",
+    "Logs/2026-03-11.jsonl",
+    "Logs/watcher_GmailWatcher_2026-03-10.log",
+    "Logs/2026-03-10.jsonl",
+    "Screenshots/image.png",
+    "Screenshots/after_post_20260302_140711.png",
+    "Screenshots/before_post_20260302_140656.png",
+    "Screenshots/modal_20260302_140648.png",
+    "Screenshots/after_click_20260302_140645.png",
+    "Screenshots/nav_20260302_140635.png",
+    "Screenshots/after_click_20260302_132053.png",
+    "Screenshots/nav_20260302_132045.png",
+    "Screenshots/diagnostic_20260302_130843.png",
+    "Screenshots/debug_after_post_20260302_130515.png"
+  ]
+}

@@ -1,0 +1,16 @@
+2026-03-01 22:48:14,734 - FileSystemWatcher - INFO - Watching folder: AI_Employee_Vault\Inbox
+2026-03-01 22:48:14,734 - FileSystemWatcher - INFO - Starting FileSystemWatcher
+2026-03-01 22:48:14,734 - FileSystemWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-01 22:48:14,734 - FileSystemWatcher - INFO - Check interval: 30s
+2026-03-01 22:48:14,734 - FileSystemWatcher - INFO - Dry run: False
+2026-03-01 22:49:14,747 - FileSystemWatcher - INFO - Found 1 new item(s)
+2026-03-01 22:49:14,750 - FileSystemWatcher - INFO - Moved file to vault inbox: test_20260301_224914.md
+2026-03-01 22:49:14,752 - FileSystemWatcher - INFO - Created action file: FILE_test_20260301_224914.md
+2026-03-01 22:50:18,465 - FileSystemWatcher - INFO - Watcher stopped by user
+2026-03-01 22:50:18,465 - FileSystemWatcher - INFO - ==================================================
+2026-03-01 22:50:18,465 - FileSystemWatcher - INFO - Watcher Statistics:
+2026-03-01 22:50:18,465 - FileSystemWatcher - INFO -   Runtime: 0:02:03.741340
+2026-03-01 22:50:18,465 - FileSystemWatcher - INFO -   Items processed: 1
+2026-03-01 22:50:18,465 - FileSystemWatcher - INFO -   Files created: 1
+2026-03-01 22:50:18,473 - FileSystemWatcher - INFO -   Errors: 0
+2026-03-01 22:50:18,473 - FileSystemWatcher - INFO - ==================================================

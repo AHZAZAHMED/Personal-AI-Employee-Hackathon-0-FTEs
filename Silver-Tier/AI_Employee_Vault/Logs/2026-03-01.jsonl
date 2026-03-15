@@ -1,0 +1,4 @@
+{"timestamp": "2026-03-01T22:49:14.750941", "watcher": "FileSystemWatcher", "action_type": "file_processed", "filename": "test.md", "size": 20, "action_file": "FILE_test_20260301_224914.md"}
+{"timestamp": "2026-03-01T22:50:36.330948", "event_type": "task_started", "file": "FILE_test_20260301_224914.md"}
+{"timestamp": "2026-03-01T22:50:36.434947", "event_type": "task_completed", "file": "FILE_test_20260301_224914.md", "type": "file_drop", "category": "Test", "destination": "FILE_test_20260301_224914_completed_20260301_225036.md"}
+{"timestamp": "2026-03-01T22:50:36.441949", "event_type": "cycle_completed", "tasks_processed": 1, "success": true}

@@ -1,0 +1,176 @@
+2026-03-02 00:13:57,276 - google_auth_oauthlib.flow - INFO - Please visit this URL to authorize this application: https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=295166291111-cf2h1glb2mr3mt4tk5idjl4iourkqhn2.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A55042%2F&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly&state=1oOZbHEvN1lQiD3bmpmuMZ0wS4E0bL&code_challenge=r8rI9qh8DSjj2U7Q3cuBpHoK2_PcKOZ9ZSn7uxo8MCY&code_challenge_method=S256&access_type=offline
+2026-03-02 00:16:48,071 - google_auth_oauthlib.flow - INFO - Please visit this URL to authorize this application: https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=295166291111-cf2h1glb2mr3mt4tk5idjl4iourkqhn2.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A51643%2F&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly&state=KQM6ckF9eolV1WoR7EtkRkBSEvpdrp&code_challenge=3bpbwozquJuTvD7p0iCAMdz3osbNWxbsB529QlZpFLo&code_challenge_method=S256&access_type=offline
+2026-03-02 00:17:21,073 - google_auth_oauthlib.flow - INFO - "GET /?state=KQM6ckF9eolV1WoR7EtkRkBSEvpdrp&iss=https://accounts.google.com&code=4/0AfrIepBe6nkDK01ol9BeXwBXyRyoFsarEOI7K1VUN9i1CjJQc1IB9pxqZttzmnrZXRzY6w&scope=https://www.googleapis.com/auth/gmail.readonly HTTP/1.1" 200 65
+2026-03-02 00:17:23,311 - GmailWatcher - INFO - Gmail authentication successful
+2026-03-02 00:17:23,337 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-02 00:17:23,345 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\credentails.json)
+2026-03-02 00:17:23,345 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-02 00:17:23,345 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-02 00:17:23,345 - GmailWatcher - INFO - Check interval: 120s
+2026-03-02 00:17:23,345 - GmailWatcher - INFO - Dry run: False
+2026-03-02 00:17:26,826 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-02 00:17:26,840 - GmailWatcher - INFO - Created action file: EMAIL_19c6791f_20260302_001726.md
+2026-03-02 00:26:26,274 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-02 00:26:26,274 - GmailWatcher - INFO - ==================================================
+2026-03-02 00:26:26,274 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-02 00:26:26,274 - GmailWatcher - INFO -   Runtime: 0:09:40.860414
+2026-03-02 00:26:26,274 - GmailWatcher - INFO -   Items processed: 1
+2026-03-02 00:26:26,274 - GmailWatcher - INFO -   Files created: 1
+2026-03-02 00:26:26,274 - GmailWatcher - INFO -   Errors: 0
+2026-03-02 00:26:26,274 - GmailWatcher - INFO - ==================================================
+2026-03-02 14:15:55,701 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-02 14:15:55,701 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\credentails.json)
+2026-03-02 14:15:55,701 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-02 14:15:55,701 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-02 14:15:55,701 - GmailWatcher - INFO - Check interval: 30s
+2026-03-02 14:15:55,701 - GmailWatcher - INFO - Dry run: False
+2026-03-02 14:15:58,101 - GmailWatcher - INFO - Found 4 new item(s)
+2026-03-02 14:15:58,147 - GmailWatcher - INFO - Created action file: EMAIL_19cadd49_20260302_141558.md
+2026-03-02 14:15:58,154 - GmailWatcher - INFO - Created action file: EMAIL_19cad761_20260302_141558.md
+2026-03-02 14:15:58,159 - GmailWatcher - INFO - Created action file: EMAIL_19cad4f0_20260302_141558.md
+2026-03-02 14:15:58,164 - GmailWatcher - INFO - Created action file: EMAIL_19cad4df_20260302_141558.md
+2026-03-02 16:15:33,339 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-02 18:55:24,331 - GmailWatcher - ERROR - Error checking Gmail: [Errno 11001] getaddrinfo failed
+2026-03-02 18:55:56,171 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-02 19:06:52,940 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-02 19:13:52,136 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-02 20:14:39,461 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-02 20:15:53,911 - GmailWatcher - ERROR - Error checking Gmail: Remote end closed connection without response
+2026-03-02 22:01:10,642 - GmailWatcher - ERROR - Error checking Gmail: [WinError 10054] An existing connection was forcibly closed by the remote host
+2026-03-02 22:25:29,218 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-02 22:41:45,807 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-02 22:41:45,828 - GmailWatcher - INFO - Created action file: EMAIL_19cafa43_20260302_224145.md
+2026-03-02 22:50:53,749 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-02 22:50:53,749 - GmailWatcher - INFO - ==================================================
+2026-03-02 22:50:53,765 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-02 22:50:53,765 - GmailWatcher - INFO -   Runtime: 8:35:00.365341
+2026-03-02 22:50:53,765 - GmailWatcher - INFO -   Items processed: 5
+2026-03-02 22:50:53,765 - GmailWatcher - INFO -   Files created: 5
+2026-03-02 22:50:53,765 - GmailWatcher - INFO -   Errors: 0
+2026-03-02 22:50:53,765 - GmailWatcher - INFO - ==================================================
+2026-03-02 22:57:50,190 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-02 22:57:50,190 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\credentails.json)
+2026-03-02 22:57:50,190 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-02 22:57:50,205 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-02 22:57:50,205 - GmailWatcher - INFO - Check interval: 30s
+2026-03-02 22:57:50,205 - GmailWatcher - INFO - Dry run: False
+2026-03-02 22:57:52,606 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 22:57:52,618 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 22:58:02,281 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-02 22:58:02,281 - GmailWatcher - INFO - ==================================================
+2026-03-02 22:58:02,281 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-02 22:58:02,284 - GmailWatcher - INFO -   Runtime: 0:00:14.496719
+2026-03-02 22:58:02,285 - GmailWatcher - INFO -   Items processed: 0
+2026-03-02 22:58:02,286 - GmailWatcher - INFO -   Files created: 0
+2026-03-02 22:58:02,286 - GmailWatcher - INFO -   Errors: 0
+2026-03-02 22:58:02,287 - GmailWatcher - INFO - ==================================================
+2026-03-02 22:58:40,154 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-02 22:58:40,154 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\credentails.json)
+2026-03-02 22:58:40,154 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-02 22:58:40,160 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-02 22:58:40,160 - GmailWatcher - INFO - Check interval: 30s
+2026-03-02 22:58:40,160 - GmailWatcher - INFO - Dry run: False
+2026-03-02 22:58:44,077 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 22:58:44,081 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 22:59:16,129 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 22:59:16,129 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 22:59:46,279 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 22:59:46,279 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:00:16,464 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:00:16,464 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:00:46,643 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:00:46,652 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:01:16,815 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:01:16,815 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:01:47,057 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:01:47,057 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:02:17,271 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:02:17,271 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:02:47,474 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:02:47,474 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:03:17,680 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:03:17,696 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:03:47,868 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:03:47,868 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:04:18,036 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:04:18,036 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:04:48,199 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:04:48,199 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:05:18,354 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:05:18,354 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:05:48,534 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:05:48,534 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:06:18,849 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
+2026-03-02 23:06:18,849 - GmailWatcher - ERROR - Error checking Gmail: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is%3Aunread&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
+2026-03-02 23:06:36,281 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-02 23:06:36,281 - GmailWatcher - INFO - ==================================================
+2026-03-02 23:06:36,281 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-02 23:06:36,281 - GmailWatcher - INFO -   Runtime: 0:07:58.361463
+2026-03-02 23:06:36,284 - GmailWatcher - INFO -   Items processed: 0
+2026-03-02 23:06:36,284 - GmailWatcher - INFO -   Files created: 0
+2026-03-02 23:06:36,284 - GmailWatcher - INFO -   Errors: 0
+2026-03-02 23:06:36,284 - GmailWatcher - INFO - ==================================================
+2026-03-02 23:06:41,137 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-02 23:06:41,144 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\credentails.json)
+2026-03-02 23:06:41,148 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-02 23:06:41,148 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-02 23:06:41,148 - GmailWatcher - INFO - Check interval: 30s
+2026-03-02 23:06:41,148 - GmailWatcher - INFO - Dry run: False
+2026-03-02 23:06:43,539 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-02 23:06:43,600 - GmailWatcher - INFO - Created action file: EMAIL_19cafb2c_20260302_230643.md
+2026-03-02 23:07:22,016 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-02 23:07:22,019 - GmailWatcher - INFO - ==================================================
+2026-03-02 23:07:22,019 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-02 23:07:22,019 - GmailWatcher - INFO -   Runtime: 0:00:43.068193
+2026-03-02 23:07:22,019 - GmailWatcher - INFO -   Items processed: 1
+2026-03-02 23:07:22,021 - GmailWatcher - INFO -   Files created: 1
+2026-03-02 23:07:22,021 - GmailWatcher - INFO -   Errors: 0
+2026-03-02 23:07:22,022 - GmailWatcher - INFO - ==================================================
+2026-03-02 23:26:35,796 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-02 23:26:35,796 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\credentails.json)
+2026-03-02 23:26:35,808 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-02 23:26:35,810 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-02 23:26:35,810 - GmailWatcher - INFO - Check interval: 30s
+2026-03-02 23:26:35,810 - GmailWatcher - INFO - Dry run: False
+2026-03-02 23:26:38,577 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-02 23:26:38,579 - GmailWatcher - INFO - Created action file: EMAIL_19cafcb7_20260302_232638.md
+2026-03-02 23:26:58,170 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-02 23:26:58,171 - GmailWatcher - INFO - ==================================================
+2026-03-02 23:26:58,172 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-02 23:26:58,173 - GmailWatcher - INFO -   Runtime: 0:00:25.227787
+2026-03-02 23:26:58,173 - GmailWatcher - INFO -   Items processed: 1
+2026-03-02 23:26:58,174 - GmailWatcher - INFO -   Files created: 1
+2026-03-02 23:26:58,174 - GmailWatcher - INFO -   Errors: 0
+2026-03-02 23:26:58,177 - GmailWatcher - INFO - ==================================================
+2026-03-02 23:39:36,255 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-02 23:39:36,265 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\credentails.json)
+2026-03-02 23:39:36,265 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-02 23:39:36,265 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-02 23:39:36,265 - GmailWatcher - INFO - Check interval: 30s
+2026-03-02 23:39:36,271 - GmailWatcher - INFO - Dry run: False
+2026-03-02 23:39:48,352 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-02 23:39:48,357 - GmailWatcher - INFO - Created action file: EMAIL_19cafd91_20260302_233948.md
+2026-03-02 23:39:54,444 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-02 23:39:54,446 - GmailWatcher - INFO - ==================================================
+2026-03-02 23:39:54,446 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-02 23:39:54,448 - GmailWatcher - INFO -   Runtime: 0:00:24.345712
+2026-03-02 23:39:54,448 - GmailWatcher - INFO -   Items processed: 1
+2026-03-02 23:39:54,448 - GmailWatcher - INFO -   Files created: 1
+2026-03-02 23:39:54,450 - GmailWatcher - INFO -   Errors: 0
+2026-03-02 23:39:54,450 - GmailWatcher - INFO - ==================================================
+2026-03-02 23:52:28,721 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-02 23:52:28,732 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\credentails.json)
+2026-03-02 23:52:28,734 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-02 23:52:28,734 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-02 23:52:28,735 - GmailWatcher - INFO - Check interval: 30s
+2026-03-02 23:52:28,735 - GmailWatcher - INFO - Dry run: False
+2026-03-02 23:52:33,728 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-02 23:52:33,798 - GmailWatcher - INFO - Created action file: EMAIL_19cafe4f_20260302_235233.md
+2026-03-02 23:53:02,685 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-02 23:53:02,685 - GmailWatcher - INFO - ==================================================
+2026-03-02 23:53:02,685 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-02 23:53:02,688 - GmailWatcher - INFO -   Runtime: 0:00:37.311598
+2026-03-02 23:53:02,688 - GmailWatcher - INFO -   Items processed: 1
+2026-03-02 23:53:02,688 - GmailWatcher - INFO -   Files created: 1
+2026-03-02 23:53:02,688 - GmailWatcher - INFO -   Errors: 0
+2026-03-02 23:53:02,688 - GmailWatcher - INFO - ==================================================
