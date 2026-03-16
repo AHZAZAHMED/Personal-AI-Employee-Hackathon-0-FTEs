@@ -51,7 +51,7 @@ credentails.json
 .env.*.local
 
 # Gmail/LinkedIn Sessions
-AI_Employee_Vault/.gmail_token.json
+Silver-Tier/AI_Employee_Vault/.gmail_token.json
 linkedin_browser_session/
 
 # Logs
