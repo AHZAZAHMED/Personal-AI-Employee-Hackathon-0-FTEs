@@ -48,6 +48,8 @@ Desktop.ini
 credentails.json
 *.env
 .env.local
+AI_Employee_Vault/.gmail_token.json
+AI_Employee_Vault/Done/
 .env.*.local
 
 # Gmail/LinkedIn Sessions
