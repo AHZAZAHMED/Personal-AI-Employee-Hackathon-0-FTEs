@@ -22,7 +22,7 @@ These are the **ONLY** scripts needed for Silver Tier functionality.
 
 | Script | Purpose | Required For |
 |--------|---------|--------------|
-| `email_sender_mcp.py` | Sends emails via MCP Gmail | Silver Tier |
+| `email_sender_mcp.py` | Sends emails via Gmail API | Silver Tier |
 
 ### LinkedIn Scripts
 
@@ -165,11 +165,10 @@ python scripts/task_processor.py --vault AI_Employee_Vault
 ---
 
 ### email_sender_mcp.py
-**Purpose:** Send emails via MCP Gmail server
+**Purpose:** Send emails via Gmail API
 
 **Key Features:**
-- Integrates with `@cablate/mcp-gmail`
-- Falls back to Gmail API if MCP fails
+- Integrates with Gmail API directly
 - Professional email templates
 - Logs all sent emails
 
@@ -233,7 +232,7 @@ powershell -ExecutionPolicy Bypass -File scripts/Create-SilverTier-Tasks.ps1
    ↓
 6. Human approves (moves to /Approved/)
    ↓
-7. Email Sender sends email via MCP
+7. Email Sender sends email via Gmail API
    ↓
 8. Task moved to /Done/
    ↓

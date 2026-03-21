@@ -11,7 +11,7 @@ Silver Tier extends Bronze Tier with advanced automation capabilities:
 - ✅ **Two or more Watcher scripts** (File System + Gmail)
 - ✅ **Automatically Post on LinkedIn** about business updates
 - ✅ **Plan.md generation** for complex tasks
-- ✅ **One working MCP server** for external actions
+- ✅ **Gmail API integration** for external actions
 - ✅ **Human-in-the-loop approval workflow** for sensitive actions
 - ✅ **Basic scheduling** via Windows Task Scheduler
 - ✅ **All AI functionality as Agent Skills** (in `/Skills/`)
@@ -26,7 +26,7 @@ Silver Tier extends Bronze Tier with advanced automation capabilities:
 |---------|--------|--------|
 | Watchers | 1 (File System) | 2+ (File System + Gmail) |
 | Task Planning | Basic | Detailed Plan.md files |
-| External Actions | None | Email + LinkedIn via MCP |
+| External Actions | None | Email + LinkedIn via Gmail API |
 | Approval Workflow | Basic | Full HITL with folders |
 | Scheduling | Manual | Windows Task Scheduler |
 | Skills Documentation | 1 file | 7 files |
@@ -51,10 +51,10 @@ E:\Personal-AI-Employee-Hackathon-0-FTEs\
 │   │   ├── vault-operations.md        # Bronze skill
 │   │   ├── task-plan-generation.md    # Silver: Plans
 │   │   ├── human-approval-workflow.md # Silver: Approval
-│   │   ├── mcp-email-integration.md   # Silver: Email
+│   │   ├── gmail-api-integration.md   # Silver: Email (updated skill)
 │   │   ├── linkedin-auto-posting.md   # Silver: LinkedIn
 │   │   ├── scheduled-operations.md    # Silver: Scheduling
-│   │   ├── gmail-watcher-integration.md # Silver: Gmail
+│   │   └── gmail-watcher-integration.md # Silver: Gmail
 │   │   └── whatsapp-watcher-integration.md # Silver: WhatsApp
 │   ├── Needs_Action/
 │   ├── In_Progress/qwen_agent/
@@ -73,8 +73,8 @@ E:\Personal-AI-Employee-Hackathon-0-FTEs\
 | Component | Version | Purpose |
 |-----------|---------|---------|
 | Python | 3.13+ | Watcher scripts |
-| Node.js | v24+ LTS | Playwright MCP |
-| Gmail API | Enabled | Email monitoring |
+| Node.js | v24+ LTS | Playwright for LinkedIn |
+| Gmail API | Enabled | Email monitoring & sending |
 | Playwright | Latest | LinkedIn posting |
 
 ### Install Dependencies
@@ -354,7 +354,7 @@ Get-ScheduledTask -TaskName "AI_Employee_*" | Unregister-ScheduledTask
 - [ ] Action files created in `/Needs_Action/`
 - [ ] Orchestrator creates Plan.md files
 - [ ] Approval workflow functional
-- [ ] LinkedIn Poster can connect to MCP
+- [ ] LinkedIn Poster posts successfully
 - [ ] Scheduled tasks running
 
 ### Run All Tests
@@ -366,7 +366,7 @@ python scripts\gmail_watcher.py --vault AI_Employee_Vault --dry-run
 # 2. Test Orchestrator
 python scripts\orchestrator.py --vault AI_Employee_Vault --once
 
-# 3. Test LinkedIn Poster (check MCP connection)
+# 3. Test LinkedIn Poster
 python scripts\linkedin_poster.py --vault AI_Employee_Vault
 
 # 4. Check logs
@@ -446,7 +446,7 @@ Solution: Check Task Scheduler history for errors
 | 2+ Watcher scripts | ✅ | File System + Gmail |
 | LinkedIn auto-posting | ✅ | linkedin_poster.py |
 | Plan.md generation | ✅ | orchestrator.py |
-| MCP server integration | ✅ | Email + Playwright |
+| External action integration | ✅ | Gmail API + Playwright |
 | HITL approval workflow | ✅ | /Approved/, /Rejected/ folders |
 | Windows Task Scheduler | ✅ | Create-SilverTier-Tasks.ps1 |
 | Agent Skills documentation | ✅ | 7 skill files in /Skills/ |

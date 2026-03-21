@@ -87,6 +87,12 @@ class Orchestrator:
     def move_to_in_progress(self, filepath: Path) -> Path:
         """Move task to /In_Progress/qwen_agent."""
         dest = self.in_progress / filepath.name
+        
+        # If destination already exists, add timestamp to avoid conflict
+        if dest.exists():
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            dest = self.in_progress / f'{filepath.stem}_{timestamp}{filepath.suffix}'
+        
         filepath.rename(dest)
         return dest
     
@@ -135,12 +141,18 @@ class Orchestrator:
             result['action'] = 'approval_requested'
             result['approval_file'] = str(approval_file)
 
-            # Keep original email in In_Progress for reference
-            # Only the approval request goes to Pending_Approval
+            # Move original file to In_Progress to mark as being processed
+            # This prevents re-processing on next orchestrator run
+            try:
+                if task_file.exists():
+                    self.move_to_in_progress(task_file)
+                    print(f"  Original file moved to: {self.in_progress / task_file.name}")
+            except Exception as e:
+                print(f"  Warning: Could not move original file: {e}")
+
             print(f"  Approval request created: {approval_file.name}")
-            print(f"  Original email kept in: {self.in_progress / task_file.name}")
             print(f"  Human must approve in /Pending_Approval/ folder")
-            
+
             # Update dashboard immediately to show pending approvals
             self.update_dashboard()
 
@@ -148,10 +160,10 @@ class Orchestrator:
             # Auto-approved - process directly
             print(f"  Auto-approved, processing...")
             result = self._execute_task(task_file, task_data, content)
-            
+
             # Update dashboard after completion
             self.update_dashboard()
-        
+
         return result
     
     def _requires_approval(self, task_type: str, task_data: Dict) -> bool:
@@ -375,13 +387,15 @@ processed_by: Orchestrator (Silver Tier)
             for task in pending_tasks:
                 try:
                     # Process FIRST (creates plan, approval request, or executes)
+                    # process_task now moves the file internally when needed
                     result = self.process_task(task)
                     self.stats['tasks_processed'] += 1
-                    
-                    # Then move to in_progress (if still exists)
-                    if task.exists():
+
+                    # Move to in_progress only if file still exists and wasn't moved internally
+                    # (e.g., for auto-approved tasks that don't create approval requests)
+                    if task.exists() and result.get('action') != 'approval_requested':
                         self.move_to_in_progress(task)
-                        
+
                 except Exception as e:
                     self.logger.error(f"Error processing {task.name}: {e}")
                     self.stats['errors'] += 1

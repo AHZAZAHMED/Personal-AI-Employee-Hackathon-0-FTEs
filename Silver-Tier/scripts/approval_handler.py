@@ -208,14 +208,14 @@ Please respond within 24 hours.
         
         print(f"\nProcessing {len(approved_files)} approved action(s)...")
         
-        # If no executor provided, try to use email sender (MCP-based)
+        # If no executor provided, try to use email sender (Gmail API)
         if executor_callback is None:
             try:
                 from email_sender_mcp import execute_approved_email
                 executor_callback = execute_approved_email
-                print("  Using MCP Email Sender for email actions")
+                print("  Using Gmail API Sender for email actions")
             except Exception as e:
-                print(f"  MCP Email Sender not available: {e}")
+                print(f"  Gmail API Sender not available: {e}")
                 print("  Will mark as executed only")
         
         for filepath in approved_files:

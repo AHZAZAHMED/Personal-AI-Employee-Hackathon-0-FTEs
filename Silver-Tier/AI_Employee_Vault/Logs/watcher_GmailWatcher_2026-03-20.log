@@ -1,0 +1,27 @@
+2026-03-20 16:09:47,153 - google_auth_oauthlib.flow - INFO - Please visit this URL to authorize this application: https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=295166291111-cf2h1glb2mr3mt4tk5idjl4iourkqhn2.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A59369%2F&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.send+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.compose&state=0TjWikI3GriqSUqDlVAaR5pCtW1Fky&code_challenge=Kkebm0z_pOkSRrX5ezIK2RuYkH2uDgoNFniswyWMFyA&code_challenge_method=S256&access_type=offline
+2026-03-20 16:24:37,512 - google_auth_oauthlib.flow - INFO - Please visit this URL to authorize this application: https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=295166291111-cf2h1glb2mr3mt4tk5idjl4iourkqhn2.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A65305%2F&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.send+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.compose&state=bLsfZNPVepXbrIdsm8oItb3uNaA06g&code_challenge=ro145-aX759YF57zxaYcaCz3TZvuTS5LPDu5JJLXpnA&code_challenge_method=S256&access_type=offline
+2026-03-20 18:28:45,801 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-20 18:28:45,805 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\Silver-Tier\credentails.json)
+2026-03-20 18:28:45,805 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-20 18:28:45,807 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-20 18:28:45,807 - GmailWatcher - INFO - Check interval: 120s
+2026-03-20 18:28:45,808 - GmailWatcher - INFO - Dry run: False
+2026-03-20 18:28:52,372 - GmailWatcher - INFO - Found 10 new item(s)
+2026-03-20 18:28:52,374 - GmailWatcher - INFO - Created action file: EMAIL_19d0b6e2_20260320_182852.md
+2026-03-20 18:28:52,431 - GmailWatcher - INFO - Created action file: EMAIL_19d0b6c6_20260320_182852.md
+2026-03-20 18:28:52,439 - GmailWatcher - INFO - Created action file: EMAIL_19d0b67b_20260320_182852.md
+2026-03-20 18:28:52,445 - GmailWatcher - INFO - Created action file: EMAIL_19d0b67a_20260320_182852.md
+2026-03-20 18:28:52,453 - GmailWatcher - INFO - Created action file: EMAIL_19d0b679_20260320_182852.md
+2026-03-20 18:28:52,461 - GmailWatcher - INFO - Created action file: EMAIL_19d0b678_20260320_182852.md
+2026-03-20 18:28:52,536 - GmailWatcher - INFO - Created action file: EMAIL_19d0b678_20260320_182852.md
+2026-03-20 18:28:52,536 - GmailWatcher - INFO - Created action file: EMAIL_19d0b677_20260320_182852.md
+2026-03-20 18:28:52,573 - GmailWatcher - INFO - Created action file: EMAIL_19d0b677_20260320_182852.md
+2026-03-20 18:28:52,578 - GmailWatcher - INFO - Created action file: EMAIL_19d0b676_20260320_182852.md
+2026-03-20 18:29:31,028 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-20 18:29:31,028 - GmailWatcher - INFO - ==================================================
+2026-03-20 18:29:31,028 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-20 18:29:31,028 - GmailWatcher - INFO -   Runtime: 0:00:48.404656
+2026-03-20 18:29:31,028 - GmailWatcher - INFO -   Items processed: 10
+2026-03-20 18:29:31,028 - GmailWatcher - INFO -   Files created: 10
+2026-03-20 18:29:31,028 - GmailWatcher - INFO -   Errors: 0
+2026-03-20 18:29:31,028 - GmailWatcher - INFO - ==================================================

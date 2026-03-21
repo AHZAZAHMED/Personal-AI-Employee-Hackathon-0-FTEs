@@ -1,5 +1,6 @@
 # Qwen Code
-.qwen/
+.qwen/*
+!.qwen/skills/
 
 # Python
 __pycache__/
