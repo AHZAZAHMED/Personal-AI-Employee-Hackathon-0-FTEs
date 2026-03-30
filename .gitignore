@@ -53,6 +53,8 @@ AI_Employee_Vault/.gmail_token.json
 AI_Employee_Vault/Done/
 .env.*.local
 Gold-Tier/.env
+Gold-Tier/.apify.env
+Gold-Tier/.apify_credentials.env
 
 
 # Gmail/LinkedIn Sessions
