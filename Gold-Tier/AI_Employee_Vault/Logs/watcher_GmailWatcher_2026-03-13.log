@@ -1,0 +1,77 @@
+2026-03-13 23:02:36,929 - google_auth_oauthlib.flow - INFO - Please visit this URL to authorize this application: https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=295166291111-cf2h1glb2mr3mt4tk5idjl4iourkqhn2.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A61032%2F&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.send+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.compose&state=B3CYAKJo25fV7acvICLb9roZjvBhFu&code_challenge=5Mft_eknlFJEOweOL0WW0wTYZl_mOsDsO6eNPDiOVns&code_challenge_method=S256&access_type=offline
+2026-03-13 23:04:12,090 - google_auth_oauthlib.flow - INFO - "GET /?state=B3CYAKJo25fV7acvICLb9roZjvBhFu&iss=https://accounts.google.com&code=4/0AfrIepDAomEaxOuBf8cKkyKReGpt3cfzhg4-s79cAZgDSQ_BEhO18EXo-2gCchjLf1dMNg&scope=https://www.googleapis.com/auth/gmail.readonly%20https://www.googleapis.com/auth/gmail.send%20https://www.googleapis.com/auth/gmail.compose HTTP/1.1" 200 65
+2026-03-13 23:04:13,802 - GmailWatcher - INFO - Gmail authentication successful (with send permissions)
+2026-03-13 23:04:13,945 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-13 23:04:13,992 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\Silver-Tier\credentails.json)
+2026-03-13 23:04:13,992 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-13 23:04:13,992 - GmailWatcher - INFO - Vault path: E:\Personal-AI-Employee-Hackathon-0-FTEs\Silver-Tier\AI_Employee_Vault
+2026-03-13 23:04:13,992 - GmailWatcher - INFO - Check interval: 120s
+2026-03-13 23:04:13,992 - GmailWatcher - INFO - Dry run: False
+2026-03-13 23:04:19,521 - GmailWatcher - INFO - Found 5 new item(s)
+2026-03-13 23:04:19,592 - GmailWatcher - INFO - Created action file: EMAIL_19ce85ed_20260313_230419.md
+2026-03-13 23:04:19,605 - GmailWatcher - INFO - Created action file: EMAIL_19ce7c43_20260313_230419.md
+2026-03-13 23:04:19,605 - GmailWatcher - INFO - Created action file: EMAIL_19ce28a9_20260313_230419.md
+2026-03-13 23:04:19,605 - GmailWatcher - INFO - Created action file: EMAIL_19ce283d_20260313_230419.md
+2026-03-13 23:04:19,617 - GmailWatcher - INFO - Created action file: EMAIL_19ce2556_20260313_230419.md
+2026-03-13 23:11:17,567 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-13 23:11:17,571 - GmailWatcher - INFO - ==================================================
+2026-03-13 23:11:17,571 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-13 23:11:17,571 - GmailWatcher - INFO -   Runtime: 0:09:13.770224
+2026-03-13 23:11:17,574 - GmailWatcher - INFO -   Items processed: 5
+2026-03-13 23:11:17,574 - GmailWatcher - INFO -   Files created: 5
+2026-03-13 23:11:17,574 - GmailWatcher - INFO -   Errors: 0
+2026-03-13 23:11:17,574 - GmailWatcher - INFO - ==================================================
+2026-03-13 23:12:06,581 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-13 23:12:06,589 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\Silver-Tier\credentails.json)
+2026-03-13 23:12:06,589 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-13 23:12:06,589 - GmailWatcher - INFO - Vault path: E:\Personal-AI-Employee-Hackathon-0-FTEs\Silver-Tier\AI_Employee_Vault
+2026-03-13 23:12:06,589 - GmailWatcher - INFO - Check interval: 120s
+2026-03-13 23:12:06,593 - GmailWatcher - INFO - Dry run: False
+2026-03-14 09:41:09,306 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-14 09:55:18,307 - GmailWatcher - INFO - Found 3 new item(s)
+2026-03-14 09:55:18,337 - GmailWatcher - INFO - Created action file: EMAIL_19ceab22_20260314_095518.md
+2026-03-14 09:55:18,386 - GmailWatcher - INFO - Created action file: EMAIL_19ceab22_20260314_095518.md
+2026-03-14 09:55:18,394 - GmailWatcher - INFO - Created action file: EMAIL_19ceab1f_20260314_095518.md
+2026-03-14 10:09:22,248 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-14 10:09:22,311 - GmailWatcher - INFO - Created action file: EMAIL_19ceabf9_20260314_100922.md
+2026-03-14 10:13:45,690 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-14 10:13:45,690 - GmailWatcher - INFO - Created action file: EMAIL_19ceac1d_20260314_101345.md
+2026-03-14 10:17:47,043 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-14 10:17:47,068 - GmailWatcher - INFO - Created action file: EMAIL_19ceac76_20260314_101747.md
+2026-03-14 10:35:52,335 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-14 10:35:52,356 - GmailWatcher - INFO - Created action file: EMAIL_19cead74_20260314_103552.md
+2026-03-14 10:38:33,885 - GmailWatcher - ERROR - Error checking Gmail: [Errno 11001] getaddrinfo failed
+2026-03-14 10:53:44,286 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-14 11:44:53,611 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-14 12:28:28,017 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-14 12:48:35,073 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-14 12:48:35,090 - GmailWatcher - INFO - Created action file: EMAIL_19ceb4ff_20260314_124835.md
+2026-03-14 13:19:00,712 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-14 13:53:09,986 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-14 16:27:34,283 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-14 16:29:38,778 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-14 17:12:07,697 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-14 17:57:43,115 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-14 19:22:35,802 - GmailWatcher - ERROR - Error checking Gmail: [Errno 11001] getaddrinfo failed
+2026-03-14 19:34:43,100 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-14 19:36:43,107 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-14 19:38:43,203 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-14 20:04:13,934 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-14 20:34:53,014 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-14 20:36:53,097 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-15 10:51:44,884 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-15 10:53:45,090 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-15 11:05:01,485 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at oauth2.googleapis.com
+2026-03-15 11:07:05,972 - GmailWatcher - INFO - Found 3 new item(s)
+2026-03-15 11:07:06,026 - GmailWatcher - INFO - Created action file: EMAIL_19cef69d_20260315_110706.md
+2026-03-15 11:07:06,086 - GmailWatcher - INFO - Created action file: EMAIL_19cecd09_20260315_110706.md
+2026-03-15 11:07:06,086 - GmailWatcher - INFO - Created action file: EMAIL_19cec68b_20260315_110706.md
+2026-03-15 11:13:08,745 - GmailWatcher - INFO - Found 2 new item(s)
+2026-03-15 11:13:08,766 - GmailWatcher - INFO - Created action file: EMAIL_19cf01f7_20260315_111308.md
+2026-03-15 11:13:08,775 - GmailWatcher - INFO - Created action file: EMAIL_19cf01f6_20260315_111308.md
+2026-03-15 11:17:10,084 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-15 11:17:10,104 - GmailWatcher - INFO - Created action file: EMAIL_19cf0230_20260315_111710.md
+2026-03-15 12:07:39,524 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-15 13:01:41,574 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-15 15:03:14,658 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-15 15:05:15,004 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)

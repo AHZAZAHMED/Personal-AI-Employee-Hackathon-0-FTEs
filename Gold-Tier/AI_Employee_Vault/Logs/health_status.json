@@ -1,0 +1,17 @@
+{
+  "last_updated": "2026-03-23T13:53:35.401274",
+  "components": {
+    "test_service": {
+      "status": "healthy",
+      "last_check": "2026-03-22T11:55:28.505180",
+      "details": {}
+    },
+    "test_component": {
+      "status": "healthy",
+      "last_check": "2026-03-23T13:53:35.401274",
+      "details": {
+        "test": "data"
+      }
+    }
+  }
+}

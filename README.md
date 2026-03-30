@@ -107,7 +107,6 @@ Platinum:     ░░░░░░░░░░░░░░░░░░░░   0%
 
 ## 🎯 Next Steps (Gold Tier)
 
-- [ ] WhatsApp Watcher integration
 - [ ] Odoo Accounting integration
 - [ ] Facebook/Instagram integration
 - [ ] Twitter (X) integration

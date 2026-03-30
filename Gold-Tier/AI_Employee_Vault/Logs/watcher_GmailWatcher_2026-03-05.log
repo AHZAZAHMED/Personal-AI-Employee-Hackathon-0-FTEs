@@ -1,0 +1,33 @@
+2026-03-05 23:56:18,570 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-05 23:56:18,579 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\credentails.json)
+2026-03-05 23:56:18,579 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-05 23:56:18,579 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-05 23:56:18,586 - GmailWatcher - INFO - Check interval: 30s
+2026-03-05 23:56:18,586 - GmailWatcher - INFO - Dry run: False
+2026-03-05 23:56:22,188 - GmailWatcher - INFO - Found 2 new item(s)
+2026-03-05 23:56:22,196 - GmailWatcher - INFO - Created action file: EMAIL_19cbf4ce_20260305_235622.md
+2026-03-05 23:56:22,198 - GmailWatcher - INFO - Created action file: EMAIL_19cbeb69_20260305_235622.md
+2026-03-05 23:57:13,798 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-05 23:57:13,798 - GmailWatcher - INFO - ==================================================
+2026-03-05 23:57:13,798 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-05 23:57:13,804 - GmailWatcher - INFO -   Runtime: 0:01:00.351781
+2026-03-05 23:57:13,804 - GmailWatcher - INFO -   Items processed: 2
+2026-03-05 23:57:13,804 - GmailWatcher - INFO -   Files created: 2
+2026-03-05 23:57:13,804 - GmailWatcher - INFO -   Errors: 0
+2026-03-05 23:57:13,804 - GmailWatcher - INFO - ==================================================
+2026-03-05 23:58:05,930 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-05 23:58:05,930 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\credentails.json)
+2026-03-05 23:58:05,930 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-05 23:58:05,930 - GmailWatcher - INFO - Vault path: AI_Employee_Vault
+2026-03-05 23:58:05,938 - GmailWatcher - INFO - Check interval: 30s
+2026-03-05 23:58:05,938 - GmailWatcher - INFO - Dry run: False
+2026-03-05 23:58:07,403 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-05 23:58:07,406 - GmailWatcher - INFO - Created action file: EMAIL_19cbf5c4_20260305_235807.md
+2026-03-05 23:58:12,886 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-05 23:58:12,887 - GmailWatcher - INFO - ==================================================
+2026-03-05 23:58:12,887 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-05 23:58:12,887 - GmailWatcher - INFO -   Runtime: 0:00:09.708288
+2026-03-05 23:58:12,887 - GmailWatcher - INFO -   Items processed: 1
+2026-03-05 23:58:12,887 - GmailWatcher - INFO -   Files created: 1
+2026-03-05 23:58:12,887 - GmailWatcher - INFO -   Errors: 0
+2026-03-05 23:58:12,887 - GmailWatcher - INFO - ==================================================

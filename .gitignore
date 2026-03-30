@@ -52,6 +52,7 @@ credentails.json
 AI_Employee_Vault/.gmail_token.json
 AI_Employee_Vault/Done/
 .env.*.local
+Gold-Tier/.env
 
 # Gmail/LinkedIn Sessions
 Silver-Tier/AI_Employee_Vault/.gmail_token.json

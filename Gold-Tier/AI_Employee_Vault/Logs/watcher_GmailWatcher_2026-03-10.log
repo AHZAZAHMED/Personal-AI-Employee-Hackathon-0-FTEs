@@ -1,0 +1,40 @@
+2026-03-10 23:08:06,908 - google_auth_oauthlib.flow - INFO - Please visit this URL to authorize this application: https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=295166291111-cf2h1glb2mr3mt4tk5idjl4iourkqhn2.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A54418%2F&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly&state=eaeZyIVGJDf7NauxBIAQn9zDDDwrw6&code_challenge=yzhZZHyybO1JTqmPe6JJ_i6lgCz5DyprT7YvaEPzAiI&code_challenge_method=S256&access_type=offline
+2026-03-10 23:08:19,449 - google_auth_oauthlib.flow - INFO - "GET /?state=eaeZyIVGJDf7NauxBIAQn9zDDDwrw6&iss=https://accounts.google.com&code=4/0AfrIepAfy7rYxhphK3He6S4G328QKOLqtGnzFnE5A3JeksmuVoTJ_I4slLv9_-30QoyT-A&scope=https://www.googleapis.com/auth/gmail.readonly HTTP/1.1" 200 65
+2026-03-10 23:08:21,956 - GmailWatcher - INFO - Gmail authentication successful
+2026-03-10 23:08:22,017 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-03-10 23:08:22,066 - GmailWatcher - INFO - Gmail Watcher initialized (credentials: E:\Personal-AI-Employee-Hackathon-0-FTEs\Silver-Tier\credentails.json)
+2026-03-10 23:08:22,066 - GmailWatcher - INFO - Starting GmailWatcher
+2026-03-10 23:08:22,066 - GmailWatcher - INFO - Vault path: E:\Personal-AI-Employee-Hackathon-0-FTEs\Silver-Tier\AI_Employee_Vault
+2026-03-10 23:08:22,066 - GmailWatcher - INFO - Check interval: 120s
+2026-03-10 23:08:22,066 - GmailWatcher - INFO - Dry run: False
+2026-03-10 23:08:26,555 - GmailWatcher - INFO - Found 3 new item(s)
+2026-03-10 23:08:26,563 - GmailWatcher - INFO - Created action file: EMAIL_19cd83e9_20260310_230826.md
+2026-03-10 23:08:26,565 - GmailWatcher - INFO - Created action file: EMAIL_19cd8384_20260310_230826.md
+2026-03-10 23:08:26,568 - GmailWatcher - INFO - Created action file: EMAIL_19cd7d2c_20260310_230826.md
+2026-03-10 23:10:28,066 - GmailWatcher - INFO - Found 2 new item(s)
+2026-03-10 23:10:28,124 - GmailWatcher - INFO - Created action file: EMAIL_19cd8f06_20260310_231028.md
+2026-03-10 23:10:28,134 - GmailWatcher - INFO - Created action file: EMAIL_19cd8ef8_20260310_231028.md
+2026-03-10 23:22:32,481 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-10 23:22:32,508 - GmailWatcher - INFO - Created action file: EMAIL_19cd8fbe_20260310_232232.md
+2026-03-10 23:58:57,842 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-10 23:58:57,905 - GmailWatcher - INFO - Created action file: EMAIL_19cd91cb_20260310_235857.md
+2026-03-11 00:07:06,347 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-11 00:07:06,424 - GmailWatcher - INFO - Created action file: EMAIL_19cd924c_20260311_000706.md
+2026-03-11 10:59:43,213 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-11 11:01:45,967 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-11 11:03:50,690 - GmailWatcher - INFO - Found 1 new item(s)
+2026-03-11 11:03:51,073 - GmailWatcher - INFO - Created action file: EMAIL_19cda6c7_20260311_110350.md
+2026-03-11 11:18:13,719 - GmailWatcher - ERROR - Error checking Gmail: [Errno 11001] getaddrinfo failed
+2026-03-11 11:20:13,876 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at gmail.googleapis.com
+2026-03-11 11:22:13,954 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at gmail.googleapis.com
+2026-03-11 11:50:29,686 - GmailWatcher - ERROR - Error checking Gmail: Unable to find the server at gmail.googleapis.com
+2026-03-11 12:51:07,216 - GmailWatcher - ERROR - Error checking Gmail: EOF occurred in violation of protocol (_ssl.c:2427)
+2026-03-11 13:04:41,361 - GmailWatcher - ERROR - Error checking Gmail: [Errno 11001] getaddrinfo failed
+2026-03-11 14:52:02,890 - GmailWatcher - INFO - Watcher stopped by user
+2026-03-11 14:52:02,895 - GmailWatcher - INFO - ==================================================
+2026-03-11 14:52:02,906 - GmailWatcher - INFO - Watcher Statistics:
+2026-03-11 14:52:02,908 - GmailWatcher - INFO -   Runtime: 15:44:21.356745
+2026-03-11 14:52:02,910 - GmailWatcher - INFO -   Items processed: 9
+2026-03-11 14:52:02,910 - GmailWatcher - INFO -   Files created: 9
+2026-03-11 14:52:02,910 - GmailWatcher - INFO -   Errors: 0
+2026-03-11 14:52:02,910 - GmailWatcher - INFO - ==================================================
