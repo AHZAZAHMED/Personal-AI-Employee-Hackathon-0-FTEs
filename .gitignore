@@ -54,9 +54,11 @@ AI_Employee_Vault/Done/
 .env.*.local
 Gold-Tier/.env
 
+
 # Gmail/LinkedIn Sessions
 Silver-Tier/AI_Employee_Vault/.gmail_token.json
 linkedin_browser_session/
+Gold-Tier/AI_Employee_Vault/.gmail_token.json
 
 # Logs
 AI_Employee_Vault/Logs/*.log
