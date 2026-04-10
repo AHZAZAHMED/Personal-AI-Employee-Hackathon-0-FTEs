@@ -65,6 +65,8 @@ Gold-Tier/AI_Employee_Vault/.gmail_token.json
 # Logs
 AI_Employee_Vault/Logs/*.log
 AI_Employee_Vault/Logs/*.jsonl
+Gold-Tier/AI_Employee_Vault/Logs/whatsapp_error_*.json
+Gold-Tier/AI_Employee_Vault/Logs/whatsapp_sent_*.json
 
 # Processed files
 AI_Employee_Vault/Logs/processed_*.json
