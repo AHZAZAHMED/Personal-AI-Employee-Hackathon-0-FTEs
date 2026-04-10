@@ -87,12 +87,12 @@ class NeonDatabase:
         create_table_sql = """
         CREATE TABLE IF NOT EXISTS whatsapp_messages (
             id SERIAL PRIMARY KEY,
-            sender_number VARCHAR(20) NOT NULL,
+            sender_number VARCHAR(50) NOT NULL,
             message_body TEXT NOT NULL,
             timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             status VARCHAR(20) DEFAULT 'unread',
             direction VARCHAR(10) NOT NULL CHECK (direction IN ('inbound', 'outbound')),
-            recipient_number VARCHAR(20),
+            recipient_number VARCHAR(50),
             twilio_sid VARCHAR(100),
             error_message TEXT,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -153,32 +153,34 @@ class NeonDatabase:
         recipient_number: str,
         message_body: str,
         twilio_sid: Optional[str] = None,
-        status: str = 'sent'
+        status: str = 'sent',
+        sender_number: Optional[str] = None
     ) -> Optional[int]:
         """
         Insert an outbound WhatsApp message.
-        
+
         Args:
             recipient_number: Recipient's WhatsApp number
             message_body: The message text
             twilio_sid: Twilio message SID
             status: Message status ('sent', 'delivered', 'failed')
-            
+            sender_number: Sender's WhatsApp number (optional, defaults to 'AI_Employee')
+
         Returns:
             The ID of the inserted message, or None if failed.
         """
         insert_sql = """
-        INSERT INTO whatsapp_messages 
+        INSERT INTO whatsapp_messages
         (sender_number, message_body, direction, status, recipient_number, twilio_sid)
         VALUES (%s, %s, 'outbound', %s, %s, %s)
         RETURNING id
         """
-        
+
         try:
             with self.get_cursor(commit=True) as cursor:
                 cursor.execute(
-                    insert_sql, 
-                    (recipient_number, message_body, status, recipient_number, twilio_sid)
+                    insert_sql,
+                    (sender_number or 'AI_Employee', message_body, status, recipient_number, twilio_sid)
                 )
                 message_id = cursor.fetchone()['id']
             logger.info(f"Inserted outbound message ID: {message_id}")

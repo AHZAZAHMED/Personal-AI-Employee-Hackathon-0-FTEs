@@ -7,7 +7,7 @@ This repository is a **hackathon project** for building a "Personal AI Employee"
 ### Core Concept
 
 The system transforms Qwen Code from a chatbot into a **proactive business partner** that:
-- Monitors Gmail, Facebook, Instagram, Twitter, and filesystems via "Watcher" scripts
+- Monitors Gmail, WhatsApp (Twilio), Facebook, Instagram, Twitter, and filesystems via "Watcher" scripts
 - Uses Obsidian Markdown files as long-term memory and GUI
 - Takes actions through MCP (Model Context Protocol) servers
 - Requires human-in-the-loop approval for sensitive operations (payments, emails to new contacts)
@@ -16,7 +16,7 @@ The system transforms Qwen Code from a chatbot into a **proactive business partn
 
 | Layer | Components | Purpose |
 |-------|------------|---------|
-| **Perception** | Gmail Watcher, Facebook Watcher, Instagram Watcher, Twitter Watcher, File System Watcher (Python scripts) | Monitor external inputs, create action files in `/Needs_Action/` |
+| **Perception** | Gmail Watcher, WhatsApp (Twilio Webhook), Facebook Watcher, Instagram Watcher, Twitter Watcher, File System Watcher | Monitor external inputs, create action files in `/Needs_Action/` |
 | **Memory/GUI** | Obsidian Vault (Dashboard.md, Company_Handbook.md, Business_Goals.md) | Local-first knowledge base and status dashboard |
 | **Reasoning** | Qwen Code (with persistence loop for multi-step tasks) | Read tasks, create plans, request approvals |
 | **Action** | MCP Servers (Email, Browser/Playwright, Payment, Calendar) | Execute external actions |
@@ -111,9 +111,16 @@ python3 .qwen/skills/browsing-with-playwright/scripts/verify.py
 ```bash
 # Using PM2 (recommended for production)
 npm install -g pm2
+
+# WhatsApp integration
+pm2 start scripts/twilio_webhook.py --name whatsapp_webhook --interpreter python
+pm2 start scripts/sync_neon_to_vault.py --name whatsapp_sync --interpreter python -- --interval 30
+
+# Other watchers
 pm2 start gmail_watcher.py --interpreter python3
 pm2 start facebook_watcher.py --interpreter python3
 pm2 start orchestrator.py --interpreter python3
+
 pm2 save
 pm2 startup
 
@@ -159,6 +166,7 @@ crontab -e
 ```
 /Needs_Action/EMAIL_<message_id>.md
 /Needs_Action/FACEBOOK_<post_id>_<date>.md
+/Needs_Action/WHATSAPP_<sender>_<date>.md
 /Plans/PLAN_<objective>_<date>.md
 /Pending_Approval/<ACTION>_<description>_<date>.md
 Logs/YYYY-MM-DD.json

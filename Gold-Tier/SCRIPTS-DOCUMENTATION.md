@@ -1,8 +1,8 @@
-# Silver Tier - Scripts Documentation
+# Gold Tier - Scripts Documentation
 
-## ✅ Production Scripts (Keep)
+## ✅ Production Scripts (Complete)
 
-These are the **ONLY** scripts needed for Silver Tier functionality.
+These are the **ONLY** scripts needed for Gold Tier functionality.
 
 ---
 
@@ -13,10 +13,22 @@ These are the **ONLY** scripts needed for Silver Tier functionality.
 | `base_watcher.py` | Base class for all watchers | Gmail + File System Watchers |
 | `filesystem_watcher.py` | Monitors folder for new files | Bronze + Silver Tier |
 | `gmail_watcher.py` | Monitors Gmail for new emails | Silver Tier |
+| `facebook_watcher.py` | Monitors Facebook mentions | Gold Tier |
+| `instagram_watcher.py` | Monitors Instagram comments | Gold Tier |
+| `twitter_apify_watcher.py` | Monitors Twitter via Apify | Gold Tier |
 | `orchestrator.py` | Main task coordinator | Silver + Gold Tier |
 | `approval_handler.py` | Manages approval workflow | Silver + Gold Tier |
 | `plan_generator.py` | Creates Plan.md files | Silver + Gold Tier |
 | `task_processor.py` | Processes tasks (fallback) | Bronze + Silver Tier |
+
+### WhatsApp Integration (Twilio + Neon)
+
+| Script | Purpose | Required For |
+|--------|---------|--------------|
+| `db_neon.py` | Neon PostgreSQL connection | WhatsApp Integration |
+| `twilio_webhook.py` | FastAPI webhook server | WhatsApp message receiving |
+| `sync_neon_to_vault.py` | Database to Vault bridge | WhatsApp sync |
+| `whatsapp_responder.py` | Twilio API client | WhatsApp message sending |
 
 ### MCP/Email Scripts
 
@@ -97,6 +109,106 @@ python scripts/filesystem_watcher.py --vault AI_Employee_Vault --watch <folder>
 **Usage:**
 ```bash
 python scripts/gmail_watcher.py --vault AI_Employee_Vault --interval 120
+```
+
+---
+
+### db_neon.py
+**Purpose:** Neon PostgreSQL database connection module
+
+**Key Features:**
+- Connection management with context managers
+- Schema initialization (whatsapp_messages table)
+- Insert inbound/outbound messages
+- Query unread messages
+- Update message status (unread → processing → done)
+- Error handling and logging
+
+**Usage:**
+```bash
+# Initialize database schema
+python scripts\db_neon.py
+
+# Test connection
+python scripts\db_neon.py
+```
+
+---
+
+### twilio_webhook.py
+**Purpose:** FastAPI server to receive Twilio WhatsApp webhooks
+
+**Key Features:**
+- POST endpoint for incoming WhatsApp messages
+- Status callback endpoint for delivery updates
+- HTTP Basic authentication
+- Automatic database insertion
+- Health check endpoints
+- CORS support
+
+**Endpoints:**
+- `/` - Health check
+- `/health` - Detailed health status
+- `/webhook` - Receive incoming messages
+- `/webhook/status` - Status updates
+- `/messages` - Retrieve messages (debug)
+
+**Usage:**
+```bash
+# Start webhook server
+python scripts\twilio_webhook.py --host 0.0.0.0 --port 8000
+
+# Initialize database only
+python scripts\twilio_webhook.py --init-db
+```
+
+---
+
+### sync_neon_to_vault.py
+**Purpose:** Bridge between Neon database and AI Employee Vault
+
+**Key Features:**
+- Query unread inbound messages from database
+- Create JSON files in `AI_Employee_Vault/Inbox/`
+- Update database status to 'processing'
+- Continuous sync mode (configurable interval)
+- Status reporting
+- Mark messages as done/failed
+
+**Usage:**
+```bash
+# Run sync once
+python scripts\sync_neon_to_vault.py --vault AI_Employee_Vault
+
+# Run continuously (every 30 seconds)
+python scripts\sync_neon_to_vault.py --vault AI_Employee_Vault --interval 30
+
+# Check sync status
+python scripts\sync_neon_to_vault.py --vault AI_Employee_Vault --status
+```
+
+---
+
+### whatsapp_responder.py
+**Purpose:** Send WhatsApp messages via Twilio API
+
+**Key Features:**
+- Send messages to any WhatsApp number
+- Reply to original messages
+- Database logging (outbound messages)
+- Vault logging (success/error)
+- Twilio API error handling
+- Connection testing
+
+**Usage:**
+```bash
+# Send message
+python scripts\whatsapp_responder.py \
+  --to "whatsapp:+1234567890" \
+  --message "Hello from AI Employee!"
+
+# Test connection
+python scripts\whatsapp_responder.py --test
 ```
 
 ---
