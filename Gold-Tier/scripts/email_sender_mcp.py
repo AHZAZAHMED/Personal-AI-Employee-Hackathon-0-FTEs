@@ -105,7 +105,7 @@ class EmailSender:
             # Email clients need \r\n\r\n for paragraph breaks
             email_body = body.replace('\n\n', '\r\n\r\n').replace('\n', ' ')
 
-            message = f"""From: AI Employee <AI Employee>
+            message = f"""From: AI Employee <me>
 To: {to}
 Subject: {subject}
 MIME-Version: 1.0
