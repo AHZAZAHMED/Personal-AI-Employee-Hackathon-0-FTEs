@@ -18,6 +18,7 @@ import requests
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional
 from dotenv import load_dotenv
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 load_dotenv()
 
@@ -35,6 +36,12 @@ class OdooClient:
         self.session = requests.Session()
         self.logger = logging.getLogger(self.__class__.__name__)
 
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type((requests.exceptions.RequestException, ConnectionError, TimeoutError)),
+        reraise=True
+    )
     def authenticate(self) -> bool:
         try:
             resp = self.session.post(f"{self.url}/web/session/authenticate",
@@ -51,6 +58,12 @@ class OdooClient:
             self.logger.error(f"Authentication error: {e}")
             return False
 
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type((requests.exceptions.RequestException, ConnectionError, TimeoutError)),
+        reraise=True
+    )
     def execute_kw(self, model: str, method: str, args: List = None, kwargs: Dict = None) -> Any:
         if not self.uid and not self.authenticate():
             raise Exception("Not authenticated")
