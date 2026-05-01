@@ -29,6 +29,7 @@ from approval_handler import ApprovalHandler
 from plan_generator import PlanGenerator
 from audit_logger import get_audit_logger
 from file_locking import try_lock
+from alerting import AlertManager, AlertSeverity
 
 # Import Gold Tier Skill Registry (dynamic discovery)
 try:
@@ -69,6 +70,9 @@ class Orchestrator:
 
         # Initialize audit logger
         self.audit_logger = get_audit_logger(str(vault_path))
+
+        # Initialize alert manager
+        self.alert_manager = AlertManager(vault_path=str(vault_path))
 
         # Initialize Gold Tier Skill Registry (dynamic discovery)
         self.skill_registry = None
@@ -396,7 +400,8 @@ This is an automated response. For urgent matters, please reply with "URGENT" in
                                                f"Executed via Skill Registry: {task_type}",
                                                str(result), correlation_id)
             else:
-                print(f"  [WARN] Skill failed: {result.get('error', 'unknown')}")
+                error_msg = result.get('error', 'unknown')
+                print(f"  [WARN] Skill failed: {error_msg}")
 
                 # Log task failure
                 if correlation_id:
@@ -404,8 +409,19 @@ This is an automated response. For urgent matters, please reply with "URGENT" in
                         correlation_id=correlation_id,
                         task_id=task_file.name,
                         result='failed',
-                        metadata={'task_type': task_type, 'error': result.get('error', 'unknown')}
+                        metadata={'task_type': task_type, 'error': error_msg}
                     )
+
+                # Send alert for skill failure
+                try:
+                    self.alert_manager.send_alert(
+                        severity=AlertSeverity.ERROR,
+                        title=f"Skill Execution Failed: {task_type}",
+                        message=f"Task: {task_file.name}\nSkill: {task_type}\nError: {error_msg}",
+                        context={'task_file': task_file.name, 'task_type': task_type, 'error': error_msg}
+                    )
+                except Exception as alert_error:
+                    print(f"  [WARN] Failed to send alert: {alert_error}")
 
         print(f"  No skill/handler for task type '{task_type}', marking complete")
         return self._mark_task_complete(task_file, task_data, content,
@@ -560,6 +576,17 @@ correlation_id: {correlation_id}
                     except Exception as e:
                         self.logger.error(f"Error processing {task.name}: {e}")
                         self.stats['errors'] += 1
+
+                        # Send alert for critical processing errors
+                        try:
+                            self.alert_manager.send_alert(
+                                severity=AlertSeverity.ERROR,
+                                title=f"Task Processing Error",
+                                message=f"Failed to process task: {task.name}\nError: {str(e)}",
+                                context={'task_file': task.name, 'error': str(e)}
+                            )
+                        except Exception as alert_error:
+                            self.logger.error(f"Failed to send alert: {alert_error}")
         else:
             self.logger.info("No pending tasks")
         

@@ -31,6 +31,7 @@ from typing import Dict, Optional, List
 sys.path.insert(0, str(Path(__file__).parent))
 
 from logging_config import get_logger
+from alerting import AlertManager, AlertSeverity
 
 
 class WatcherStatus:
@@ -97,6 +98,9 @@ class WatcherWatchdog:
         # Setup logging
         self.logger = get_logger('watcher_watchdog', vault_path=vault_path)
 
+        # Setup alerting
+        self.alert_manager = AlertManager(vault_path=vault_path)
+
         # Heartbeat directory
         self.heartbeat_dir = self.vault / 'Logs' / 'heartbeats'
         self.heartbeat_dir.mkdir(parents=True, exist_ok=True)
@@ -113,6 +117,17 @@ class WatcherWatchdog:
         self.logger.info(f"Monitoring {len(self.watchers)} watchers")
         self.logger.info(f"Check interval: {check_interval}s")
         self.logger.info(f"Max heartbeat age: {max_heartbeat_age}s")
+
+        # Send startup notification
+        try:
+            self.alert_manager.send_alert(
+                severity=AlertSeverity.INFO,
+                title="Watcher Watchdog Started",
+                message=f"Monitoring system is now active.\n\nWatchers monitored: {len(self.watchers)}\nCheck interval: {check_interval}s\nAlert threshold: {alert_threshold} consecutive failures",
+                context={'watchers': list(self.watchers.keys()), 'check_interval': check_interval}
+            )
+        except Exception as e:
+            self.logger.warning(f"Failed to send startup notification: {e}")
 
     def check_all_watchers(self) -> Dict[str, bool]:
         """
@@ -154,23 +169,36 @@ class WatcherWatchdog:
             watcher_name: Name of the watcher
             watcher: WatcherStatus object
         """
+        # Build alert message
+        alert_title = f"Watcher Down: {watcher_name}"
         alert_message = (
-            f"WATCHER ALERT: {watcher_name} is unhealthy\n"
+            f"{watcher_name} is unhealthy and not responding.\n\n"
             f"Consecutive failures: {watcher.consecutive_failures}\n"
-            f"Last check: {watcher.last_check.isoformat()}\n"
-            f"Last heartbeat: {watcher.last_heartbeat.isoformat() if watcher.last_heartbeat else 'Never'}\n"
+            f"Last check: {watcher.last_check.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            f"Last heartbeat: {watcher.last_heartbeat.strftime('%Y-%m-%d %H:%M:%S') if watcher.last_heartbeat else 'Never'}\n\n"
+            f"Action required: Check if the watcher process is running."
         )
 
         # Log alert
+        self.logger.error(f"[ALERT] {alert_title}")
         self.logger.error(alert_message)
 
-        # Write alert file
+        # Write alert file for audit trail
         alert_file = self.vault / 'Logs' / 'alerts' / f"{watcher_name}_alert_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
         alert_file.parent.mkdir(parents=True, exist_ok=True)
-        alert_file.write_text(alert_message)
+        alert_file.write_text(f"{alert_title}\n\n{alert_message}")
 
-        # TODO: Send to alerting system (Slack, email, etc.)
-        # This will be implemented in Task #25
+        # Send to alerting system (Slack, email, etc.)
+        try:
+            self.alert_manager.send_alert(
+                severity=AlertSeverity.CRITICAL,
+                title=alert_title,
+                message=alert_message,
+                context={'watcher': watcher_name, 'failures': watcher.consecutive_failures}
+            )
+            self.logger.info(f"Alert sent successfully for {watcher_name}")
+        except Exception as e:
+            self.logger.error(f"Failed to send alert for {watcher_name}: {e}")
 
     def get_summary(self) -> Dict[str, any]:
         """Get summary of all watcher statuses."""
