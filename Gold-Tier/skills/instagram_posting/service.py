@@ -9,6 +9,7 @@ No agent-related code — pure business logic only.
 
 import os
 import json
+import sys
 import time
 import logging
 import requests
@@ -17,6 +18,11 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional
 from dotenv import load_dotenv
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+
+# Add scripts/ to path for audit logger
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
+from audit_logger import get_audit_logger
+from idempotency import check_idempotency, record_operation
 
 for env_file in [Path(__file__).parent.parent.parent / ".env",
                 Path(__file__).parent.parent.parent / ".facebook_credentials.env"]:
@@ -105,21 +111,98 @@ class InstagramClient:
                                params={"fields": "id,caption,media_type,media_url,permalink,timestamp,owner", "limit": 50})
         return result.get("data", [])
 
-    def post_image(self, image_url: str, caption: str) -> Dict[str, Any]:
-        """Post an image to Instagram (container + publish)."""
+    def post_image(self, image_url: str, caption: str,
+                   correlation_id: str = "", approver: str = "",
+                   approval_time: str = "", audit_logger=None, vault_path: str = "AI_Employee_Vault") -> Dict[str, Any]:
+        """
+        Post an image to Instagram (container + publish) with audit logging and idempotency.
+
+        Args:
+            image_url: URL of the image to post
+            caption: Post caption
+            correlation_id: Correlation ID for audit trail and idempotency
+            approver: Who approved this post
+            approval_time: When it was approved
+            audit_logger: AuditLogger instance for logging
+            vault_path: Path to AI Employee Vault for idempotency
+
+        Returns:
+            Dict with success status and post_id or error
+        """
+        # Check idempotency - return cached result if already posted
+        if correlation_id:
+            cached = check_idempotency(correlation_id, 'instagram_post', vault_path)
+            if cached:
+                logger.info(f"Idempotency hit: Instagram post already published for {correlation_id}")
+                return cached.get('result', {})
+
+        # Log action started
+        if correlation_id and audit_logger:
+            audit_logger.log_action_started(
+                correlation_id=correlation_id,
+                action_type='instagram_post',
+                actor='instagram_posting_skill',
+                approver=approver,
+                approval_time=approval_time,
+                metadata={'image_url': image_url, 'caption_preview': caption[:100]}
+            )
+
         if not self.instagram_business_account_id:
-            return {"success": False, "error": "Instagram Business Account not linked"}
+            error = "Instagram Business Account not linked"
+
+            # Log failure
+            if correlation_id and audit_logger:
+                audit_logger.log_action_failed(
+                    correlation_id=correlation_id,
+                    action_type='instagram_post',
+                    actor='instagram_posting_skill',
+                    error=error,
+                    approver=approver,
+                    approval_time=approval_time
+                )
+
+            return {"success": False, "error": error}
+
         try:
-            # Step 1: Create container (don't include media_type for images)
+            # Step 1: Create container with explicit media_type
             container = self._request(f"{self.instagram_business_account_id}/media", method="POST",
-                                      params={"image_url": image_url, "caption": caption})
+                                      params={"image_url": image_url, "caption": caption, "media_type": "IMAGE"})
             container_id = container.get("id")
             time.sleep(2)
-            # Step 2: Publish (don't include media_type here either)
+            # Step 2: Publish
             publish = self._request(f"{self.instagram_business_account_id}/media_publish", method="POST",
                                     params={"creation_id": container_id})
-            return {"success": True, "post_id": publish.get("id")}
+
+            # Log success
+            if correlation_id and audit_logger:
+                audit_logger.log_social_post_published(
+                    correlation_id=correlation_id,
+                    platform='instagram',
+                    approver=approver,
+                    approval_time=approval_time,
+                    result='success'
+                )
+
+            result = {"success": True, "post_id": publish.get("id")}
+
+            # Record successful operation for idempotency
+            if correlation_id:
+                record_operation(correlation_id, 'instagram_post', result, vault_path, ttl_hours=168)
+
+            return result
+
         except Exception as e:
+            # Log failure
+            if correlation_id and audit_logger:
+                audit_logger.log_action_failed(
+                    correlation_id=correlation_id,
+                    action_type='instagram_post',
+                    actor='instagram_posting_skill',
+                    error=str(e),
+                    approver=approver,
+                    approval_time=approval_time
+                )
+
             return {"success": False, "error": str(e)}
 
     def get_insights(self, metric: str = "impressions", days: int = 7) -> Dict[str, Any]:
@@ -144,6 +227,9 @@ class InstagramService:
 
         self.processed_file = self.logs / "instagram_processed.json"
         self.processed_ids = self._load_processed()
+
+        # Initialize audit logger
+        self.audit_logger = get_audit_logger(str(vault_path))
 
         try:
             self.ig = InstagramClient()

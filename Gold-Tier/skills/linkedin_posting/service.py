@@ -8,12 +8,19 @@ No agent-related code — pure business logic only.
 """
 
 import json
+import sys
 import time
 import logging
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, Optional, List
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+
+# Add scripts/ to path for audit logger and error context
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
+from audit_logger import get_audit_logger
+from error_context import capture_error_context, log_error_with_context
+from idempotency import check_idempotency, record_operation
 
 try:
     from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
@@ -42,6 +49,9 @@ class LinkedInService:
         self.processed = self._load_processed()
         self.browser_session = Path(__file__).parent.parent.parent / "linkedin_browser_session"
         self.browser_session.mkdir(parents=True, exist_ok=True)
+
+        # Initialize audit logger
+        self.audit_logger = get_audit_logger(str(vault_path))
 
     def _load_processed(self) -> set:
         if self.processed_file.exists():
@@ -100,18 +110,53 @@ Move this file to `/Approved` folder to publish.
         retry=retry_if_exception_type((TimeoutError, ConnectionError)),
         reraise=True
     )
-    def publish_post(self, post_content: str) -> Dict[str, Any]:
+    def publish_post(self, post_content: str, correlation_id: str = "",
+                     approver: str = "", approval_time: str = "") -> Dict[str, Any]:
         """
-        Publish a post to LinkedIn via Playwright.
+        Publish a post to LinkedIn via Playwright with audit logging and idempotency.
 
         Args:
             post_content: The post text to publish
+            correlation_id: Correlation ID for audit trail and idempotency
+            approver: Who approved this post
+            approval_time: When it was approved
 
         Returns:
             Dict with success status, screenshot path, and steps completed
         """
+        # Check idempotency - return cached result if already posted
+        if correlation_id:
+            cached = check_idempotency(correlation_id, 'linkedin_post', str(self.vault))
+            if cached:
+                logger.info(f"Idempotency hit: LinkedIn post already published for {correlation_id}")
+                return cached.get('result', {})
+
+        # Log action started
+        if correlation_id:
+            self.audit_logger.log_action_started(
+                correlation_id=correlation_id,
+                action_type='linkedin_post',
+                actor='linkedin_posting_skill',
+                approver=approver,
+                approval_time=approval_time,
+                metadata={'content_preview': post_content[:100]}
+            )
+
         if not PLAYWRIGHT_AVAILABLE:
-            return {"success": False, "error": "Playwright not installed. Run: pip install playwright && playwright install chromium"}
+            error = "Playwright not installed. Run: pip install playwright && playwright install chromium"
+
+            # Log failure
+            if correlation_id:
+                self.audit_logger.log_action_failed(
+                    correlation_id=correlation_id,
+                    action_type='linkedin_post',
+                    actor='linkedin_posting_skill',
+                    error=error,
+                    approver=approver,
+                    approval_time=approval_time
+                )
+
+            return {"success": False, "error": error}
 
         result = {"success": False, "error": None, "screenshot": None, "steps_completed": []}
 
@@ -214,10 +259,42 @@ Move this file to `/Approved` folder to publish.
 
                 browser.close()
                 result["success"] = True
+
+                # Log success to audit system
+                if correlation_id:
+                    self.audit_logger.log_social_post_published(
+                        correlation_id=correlation_id,
+                        platform='linkedin',
+                        approver=approver,
+                        approval_time=approval_time,
+                        result='success'
+                    )
+
+                # Record successful operation for idempotency
+                if correlation_id:
+                    record_operation(correlation_id, 'linkedin_post', result, str(self.vault), ttl_hours=168)
+
                 return result
 
         except Exception as e:
             result["error"] = f"Browser error: {e}"
+
+            # Capture rich error context
+            error_context = capture_error_context(e, locals(), correlation_id)
+            log_error_with_context(error_context, str(self.vault))
+            result["error_id"] = error_context['error_id']
+
+            # Log failure to audit system
+            if correlation_id:
+                self.audit_logger.log_action_failed(
+                    correlation_id=correlation_id,
+                    action_type='linkedin_post',
+                    actor='linkedin_posting_skill',
+                    error=str(e),
+                    approver=approver,
+                    approval_time=approval_time
+                )
+
             return result
 
     def get_pending_posts(self) -> List[Dict[str, Any]]:

@@ -54,6 +54,13 @@ try:
 except Exception:
     EMAIL_AVAILABLE = False
 
+# Import idempotency system
+try:
+    from idempotency import check_idempotency, record_operation
+    IDEMPOTENCY_AVAILABLE = True
+except Exception:
+    IDEMPOTENCY_AVAILABLE = False
+
 
 class EmailInvoiceService:
     """Core email-to-invoice processing service."""
@@ -257,18 +264,35 @@ Reference ID: {reference_id}
         except Exception as e:
             logger.error(f"Failed to log action: {e}")
 
-    def process_email(self, email_content: str, send_invoice_email: bool = True) -> Dict[str, Any]:
+    def process_email(self, email_content: str, send_invoice_email: bool = True,
+                      correlation_id: str = "") -> Dict[str, Any]:
         """
         Process a customer email to create an invoice.
 
         Args:
             email_content: Full email content including frontmatter
             send_invoice_email: Whether to send invoice email reply
+            correlation_id: Optional correlation ID for idempotency
 
         Returns:
             Dict with success, customer, invoice, email results
         """
         customer = self.extract_customer_info(email_content)
+
+        # Generate correlation_id if not provided (for idempotency)
+        if not correlation_id and IDEMPOTENCY_AVAILABLE:
+            import hashlib
+            # Use email + timestamp as unique identifier
+            unique_str = f"{customer['email']}_{customer['name']}_{customer['amount']}"
+            correlation_id = hashlib.md5(unique_str.encode()).hexdigest()[:16]
+
+        # Check idempotency - return cached result if already processed
+        if IDEMPOTENCY_AVAILABLE and correlation_id:
+            cached = check_idempotency(correlation_id, 'invoice_creation', str(self.vault))
+            if cached:
+                logger.info(f"Idempotency hit: Invoice already created for {correlation_id}")
+                return cached.get('result', {})
+
         detected_currency = self.detect_currency(email_content)
         customer["original_currency"] = detected_currency
         customer["original_amount"] = customer["amount"]
@@ -283,9 +307,15 @@ Reference ID: {reference_id}
 
         self.log_action(customer, invoice_result, email_result)
 
-        return {
+        result = {
             "success": invoice_result.get("invoice_created", False),
             "customer": customer,
             "invoice": invoice_result,
             "email": email_result
         }
+
+        # Record successful operation for idempotency
+        if IDEMPOTENCY_AVAILABLE and correlation_id and result["success"]:
+            record_operation(correlation_id, 'invoice_creation', result, str(self.vault), ttl_hours=720)
+
+        return result

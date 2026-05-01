@@ -6,6 +6,7 @@ No agent-related code — pure business logic only.
 """
 
 import os
+import sys
 import json
 import logging
 from datetime import datetime
@@ -23,10 +24,10 @@ try:
 except ImportError:
     TWILIO_AVAILABLE = False
 
-# Import DB module from existing codebase
-import sys
+# Import DB module and audit logger from existing codebase
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 from db_neon import NeonDatabase
+from audit_logger import get_audit_logger
 
 load_dotenv()
 
@@ -49,6 +50,9 @@ class WhatsAppService:
         self.vault_path = Path(vault_path)
         self.logs_dir = self.vault_path / "Logs"
         self.logs_dir.mkdir(parents=True, exist_ok=True)
+
+        # Initialize audit logger
+        self.audit_logger = get_audit_logger(str(vault_path))
 
         if not self.account_sid:
             raise ValueError("TWILIO_ACCOUNT_SID not found")

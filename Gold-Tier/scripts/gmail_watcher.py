@@ -3,17 +3,6 @@ Gmail Watcher for AI Employee - Gold Tier
 
 Monitors Gmail for new unread messages and creates action files.
 Uses credentials.json from project root for Gmail API authentication.
-
-Gold Tier Features:
-- Error recovery with retry logic
-- Circuit breaker for API failures
-- Health monitoring
-- 90-day error log retention
-
-Setup:
-1. Ensure credentails.json is in project root
-2. First run will create .gmail_token.json in vault
-3. Subsequent runs use saved token
 """
 
 import base64
@@ -24,15 +13,6 @@ from typing import List, Dict, Any, Optional
 from datetime import datetime
 
 from base_watcher import BaseWatcher
-
-# Import error recovery system
-from error_recovery import (
-    with_retry,
-    classify_error,
-    ErrorType,
-    create_error_recovery,
-    safe_execute
-)
 
 
 class GmailWatcher(BaseWatcher):
@@ -50,7 +30,7 @@ class GmailWatcher(BaseWatcher):
 
         Args:
             vault_path: Path to the Obsidian vault root
-            credentials_path: Path to Gmail API credentials (default: credentails.json in project root)
+            credentials_path: Path to Gmail API credentials (default: credentials.json in project root)
             check_interval: Seconds between checks (default: 120)
             dry_run: If True, log actions but don't create files
         """
@@ -60,14 +40,10 @@ class GmailWatcher(BaseWatcher):
         if credentials_path:
             self.credentials_path = Path(credentials_path)
         else:
-            # Default to project root credentails.json
-            self.credentials_path = Path(__file__).parent.parent / 'credentails.json'
+            # Default to project root credentials.json
+            self.credentials_path = Path(__file__).parent.parent / 'credentials.json'
 
         self.token_path = self.vault_path / '.gmail_token.json'
-
-        # Initialize Gold Tier error recovery
-        self.error_logger, self.health_checker, self.circuit_breaker = create_error_recovery(vault_path)
-        self.logger = logging.getLogger(self.__class__.__name__)
 
         # Track processed message IDs
         self.processed_ids_file = self.logs_dir / 'gmail_processed_ids.json'
@@ -118,7 +94,6 @@ class GmailWatcher(BaseWatcher):
         except Exception as e:
             self.logger.error(f"Could not save processed IDs: {e}")
     
-    @with_retry(max_attempts=3, base_delay=1, max_delay=10)
     def _authenticate(self):
         """Authenticate with Gmail API (with BOTH read and send permissions)."""
         from google.auth.exceptions import RefreshError
@@ -231,7 +206,23 @@ class GmailWatcher(BaseWatcher):
             return []
         
         new_messages = []
-        
+
+        # Domains/patterns that indicate automated, promotional, or no-reply emails
+        AUTO_SENDERS = [
+            'noreply', 'no-reply', 'donotreply', 'do-not-reply',
+            'notification', 'alert', 'newsletter', 'digest',
+            'linkedin', 'facebook', 'twitter', 'instagram',
+            'google', 'microsoft', 'amazon', 'apple',
+            'subscription', 'verify', 'confirm', 'security',
+            'job alert', 'weekly update', 'monthly update',
+            'promotional', 'marketing', 'offers', 'deals',
+            'noreply@', 'no-reply@', 'donotreply@',
+            'notifications@', 'alerts@', 'team@linkedin',
+            'team@facebook', 'info@', 'support@',
+            'recent searches', 'appeared in', 'you have a new',
+            'profile viewed', 'who viewed', 'connection request',
+        ]
+
         try:
             # Search for unread messages
             results = self.service.users().messages().list(
@@ -239,13 +230,24 @@ class GmailWatcher(BaseWatcher):
                 q='is:unread',
                 maxResults=10
             ).execute()
-            
+
             messages = results.get('messages', [])
-            
+
             for msg in messages:
                 if msg['id'] not in self.processed_ids:
                     message_data = self._decode_message(self.service, 'me', msg['id'])
                     if message_data:
+                        # Skip automated/promotional emails
+                        from_email = message_data.get('from', '').lower()
+                        subject = message_data.get('subject', '').lower()
+                        snippet = message_data.get('snippet', '').lower()
+                        combined = f"{from_email} {subject} {snippet}"
+
+                        if any(kw in combined for kw in AUTO_SENDERS):
+                            self.logger.info(f"Skipping automated/promotional email from: {from_email}")
+                            self.processed_ids.add(msg['id'])
+                            continue
+
                         # Check for urgent keywords
                         subject_lower = message_data['subject'].lower()
                         snippet_lower = message_data['snippet'].lower()

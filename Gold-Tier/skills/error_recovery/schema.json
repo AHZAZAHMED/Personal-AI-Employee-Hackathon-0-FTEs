@@ -1,0 +1,18 @@
+{
+  "name": "classify_error",
+  "description": "Classify an error to determine its type (transient, auth, logic, system, unknown) and get the recommended retry strategy. Use this when an error occurs and you need to decide whether to retry, alert a human, or fix code.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "error_type": {
+        "type": "string",
+        "description": "The exception class name (e.g., 'ConnectionError', 'TimeoutError', 'KeyError')"
+      },
+      "error_message": {
+        "type": "string",
+        "description": "The error message string"
+      }
+    },
+    "required": ["error_type", "error_message"]
+  }
+}

@@ -1,0 +1,92 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Environment files (will be passed via env_file in docker-compose)
+.env
+.env.local
+.env.*.local
+
+# Credentials
+credentials.json
+token.json
+*.pem
+*.key
+.gmail_token.json
+
+# Logs
+*.log
+logs/
+AI_Employee_Vault/Logs/*.log
+AI_Employee_Vault/Logs/*.jsonl
+
+# Vault content (mount as volume instead)
+AI_Employee_Vault/Inbox/*.md
+AI_Employee_Vault/Needs_Action/*.md
+AI_Employee_Vault/Pending_Approval/*.md
+AI_Employee_Vault/Approved/*.md
+AI_Employee_Vault/Done/*.md
+AI_Employee_Vault/In_Progress/**/*.md
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test outputs
+test_uploads/
+*.tmp
+*.temp
+
+# Documentation (not needed in container)
+docs/
+*.md
+!README.md
+
+# Database
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Browser sessions
+linkedin_browser_session/
+
+# Odoo
+odoo-custom-addons/
+odoo-data/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Backup files
+*.bak
+*.backup
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Archive
+archive/

@@ -8,6 +8,7 @@ No agent-related code — pure business logic only.
 """
 
 import os
+import sys
 import json
 import logging
 import requests
@@ -16,6 +17,11 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional
 from dotenv import load_dotenv
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+
+# Add scripts/ to path for audit logger
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
+from audit_logger import get_audit_logger
+from idempotency import check_idempotency, record_operation
 
 # Load credentials
 for env_file in [Path(__file__).parent.parent.parent / ".env",
@@ -146,12 +152,38 @@ class FacebookService:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    def create_post(self, message: str, link: Optional[str] = None, photo_url: Optional[str] = None) -> Dict[str, Any]:
-        """Create a Facebook Page post."""
+    def create_post(self, message: str, link: Optional[str] = None, photo_url: Optional[str] = None,
+                    correlation_id: str = "") -> Dict[str, Any]:
+        """
+        Create a Facebook Page post with idempotency.
+
+        Args:
+            message: Post message text
+            link: Optional link to include
+            photo_url: Optional photo URL
+            correlation_id: Optional correlation ID for idempotency
+
+        Returns:
+            Dict with success status and post_id or error
+        """
+        # Check idempotency - return cached result if already posted
+        if correlation_id:
+            cached = check_idempotency(correlation_id, 'facebook_post', str(self.vault))
+            if cached:
+                logger.info(f"Idempotency hit: Facebook post already created for {correlation_id}")
+                return cached.get('result', {})
+
         if not self.client_available:
             return {"success": False, "error": "Facebook client not available"}
+
         try:
-            return self.fb.create_post(message, link, photo_url)
+            result = self.fb.create_post(message, link, photo_url)
+
+            # Record successful operation for idempotency
+            if correlation_id and result.get("success"):
+                record_operation(correlation_id, 'facebook_post', result, str(self.vault), ttl_hours=168)
+
+            return result
         except Exception as e:
             return {"success": False, "error": str(e)}
 

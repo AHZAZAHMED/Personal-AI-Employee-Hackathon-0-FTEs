@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "89344f8a2df1ecc6",
+        "id": "d5eb8d59704383c2",
         "type": "tabs",
         "children": [
           {
-            "id": "42759f44f9b2e190",
+            "id": "f4ff5ec642cc48ed",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -183,8 +183,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "42759f44f9b2e190",
+  "active": "f4ff5ec642cc48ed",
   "lastOpenFiles": [
+    "Untitled.md",
+    "Untitled",
     "Plans/PLAN_EMAIL_test_fix_20260314_102901.md",
     "Plans/PLAN_EMAIL_partnership_urgent_20260314_163637.md",
     "Plans/PLAN_EMAIL_partnership_urgent_20260314_163558.md",
@@ -210,7 +212,6 @@
     "Plans/PLAN_EMAIL_19ce283d_20260313_230419_20260314_094317.md",
     "Plans/PLAN_EMAIL_19ce85ed_20260313_230419_20260314_094245.md",
     "Plans/PLAN_EMAIL_19ce28a9_20260313_230419_20260314_094215.md",
-    "Plans/PLAN_EMAIL_19ce7c43_20260313_230419_20260314_094131.md",
     "Logs/2026-03-15.jsonl",
     "Logs/2026-03-14.jsonl",
     "Logs/2026-03-13.jsonl",
@@ -220,7 +221,6 @@
     "Logs/watcher_GmailWatcher_2026-03-11.log",
     "Logs/2026-03-11.jsonl",
     "Logs/watcher_GmailWatcher_2026-03-10.log",
-    "Logs/2026-03-10.jsonl",
     "Screenshots/image.png",
     "Screenshots/after_post_20260302_140711.png",
     "Screenshots/before_post_20260302_140656.png",

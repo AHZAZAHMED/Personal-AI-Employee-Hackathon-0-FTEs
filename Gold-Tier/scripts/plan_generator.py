@@ -2,7 +2,7 @@
 Plan Generator for AI Employee - Silver Tier
 
 Creates detailed Plan.md files for complex multi-step tasks.
-Uses Qwen Code AI to generate intelligent, contextual plans.
+Uses Claude AI to generate intelligent, contextual plans.
 Tracks progress and updates plans with completion status.
 
 Usage:
@@ -11,16 +11,20 @@ Usage:
 
 import subprocess
 import json
+import sys
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 
-# Try to import Qwen AI integration
+# Add Gold-Tier root to sys.path so 'skills' package is importable
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+# Try to use the task_planning skill first
 try:
-    from qwen_ai_integration import generate_ai_response
-    AI_AVAILABLE = True
-except:
-    AI_AVAILABLE = False
+    from skills.task_planning.skill import create_task_plan
+    SKILL_AVAILABLE = True
+except ImportError:
+    SKILL_AVAILABLE = False
 
 
 class PlanGenerator:
@@ -47,13 +51,13 @@ class PlanGenerator:
 
     def generate_ai_plan(self, task_file: Path, task_data: Dict[str, Any], content: str) -> Dict[str, Any]:
         """
-        Generate AI-powered plan using Qwen Code.
-        
+        Generate AI-powered plan using Claude AI.
+
         Args:
             task_file: Path to task file
             task_data: Task metadata
             content: Full task file content
-            
+
         Returns:
             Dictionary with AI-generated plan or fallback template
         """
@@ -162,61 +166,42 @@ Generate your complete analysis and plan now:
 """
 
         try:
-            print("    [AI] Calling Qwen Code for intelligent plan generation...")
-            
-            import shutil
-            qwen_path = shutil.which('qwen')
-            
-            if not qwen_path:
-                print("    [AI] ⚠️  Qwen Code not found - using template")
+            print("    [AI] Calling Claude API for intelligent plan generation...")
+
+            # Import Claude AI integration
+            sys.path.insert(0, str(Path(__file__).parent))
+            from claude_ai_integration import call_claude
+
+            # Call Claude API
+            ai_plan = call_claude(prompt, timeout=180)
+
+            if not ai_plan:
+                print("    [AI] Claude API returned no response - using template")
                 return {'success': False, 'method': 'template'}
-            
-            # Call Qwen Code
-            result = subprocess.run(
-                [qwen_path],
-                input=prompt,
-                capture_output=True,
-                text=True,
-                timeout=90,
-                encoding='utf-8',
-                errors='replace'
-            )
-            
-            if result.returncode != 0:
-                print("    [AI] ❌ Qwen Error:", result.stderr[:500] if result.stderr else "Unknown error")
+
+            # Check if Claude generated useful content
+            if len(ai_plan) < 200:
+                print("    [AI] Claude output too short - using template")
                 return {'success': False, 'method': 'template'}
-            
-            if result.returncode == 0 and result.stdout:
-                ai_plan = result.stdout.strip()
-                
-                # Check if Qwen generated useful content (more flexible validation)
-                if len(ai_plan) < 200:
-                    print("    [AI] ⚠️  Qwen output too short - using template")
-                    return {'success': False, 'method': 'template'}
-                
-                # Parse AI plan (more flexible - accepts various formats)
-                analysis, plan_content = self._parse_ai_plan(ai_plan)
-                
-                # If we got any analysis, consider it successful
-                if analysis or len(plan_content) > 300:
-                    print("    [AI] ✅ AI-generated intelligent plan")
-                    return {
-                        'success': True,
-                        'plan_content': plan_content,
-                        'analysis': analysis,
-                        'method': 'qwen_code_ai'
-                    }
-                else:
-                    print("    [AI] ⚠️  Qwen output invalid - using template")
-                    return {'success': False, 'method': 'template'}
+
+            # Parse AI plan
+            analysis, plan_content = self._parse_ai_plan(ai_plan)
+
+            # If we got any analysis, consider it successful
+            if analysis or len(plan_content) > 300:
+                print("    [AI] AI-generated intelligent plan via Claude")
+                return {
+                    'success': True,
+                    'plan_content': plan_content,
+                    'analysis': analysis,
+                    'method': 'claude_ai'
+                }
             else:
+                print("    [AI] Claude output invalid - using template")
                 return {'success': False, 'method': 'template'}
-                
-        except subprocess.TimeoutExpired:
-            print("    [AI] ⚠️  Qwen Code timeout - using template")
-            return {'success': False, 'method': 'template'}
+
         except Exception as e:
-            print(f"    [AI] ⚠️  Error: {e} - using template")
+            print(f"    [AI] Claude API error: {e} - using template")
             return {'success': False, 'method': 'template'}
     
     def _parse_ai_plan(self, ai_output: str) -> tuple:
@@ -244,35 +229,44 @@ Generate your complete analysis and plan now:
         return analysis, plan_content
     
     def create_plan(self, task_file: Path, task_data: Dict[str, Any]) -> Path:
-        """
-        Create a plan for a task using AI (with template fallback).
-
-        Args:
-            task_file: Path to the task file
-            task_data: Parsed task metadata
-
-        Returns:
-            Path to created plan file
-        """
+        """Create a plan for a task using the task_planning skill (with template fallback)."""
         task_type = task_data.get('type', 'default')
         content = task_file.read_text(encoding='utf-8')
 
-        # Try AI-powered plan generation first
-        if AI_AVAILABLE:
-            print(f"  Creating AI-powered plan...")
-            ai_result = self.generate_ai_plan(task_file, task_data, content)
-            
-            if ai_result.get('success'):
-                # Use AI-generated plan
-                plan_content = ai_result['plan_content']
-                print(f"    [AI] Analysis: {ai_result.get('analysis', {}).get('urgency', 'Normal')} priority")
-            else:
-                # Fallback to template
-                print(f"  Creating template plan...")
-                template_func = self.plan_templates.get(task_type, self._default_plan_template)
-                plan_content = template_func(task_file, task_data)
-        else:
-            # AI not available, use template
+        plan_content = None
+
+        # Try skill first
+        if SKILL_AVAILABLE:
+            try:
+                result = create_task_plan(
+                    task_type=task_type,
+                    task_data=task_data,
+                    task_content=content
+                )
+                if result.get('success'):
+                    # Skill may return either plan_content (text) or filepath (already written)
+                    plan_content = result.get('plan_content', '')
+                    if not plan_content and result.get('filepath'):
+                        # Skill already wrote the file — just log and return
+                        plan_path = Path(result['filepath'])
+                        print(f"  [Skill] Plan created via task_planning skill (method: {result.get('method', 'template')})")
+                        self._log_event('plan_created', {
+                            'task_file': task_file.name,
+                            'plan_file': plan_path.name,
+                            'task_type': task_type,
+                            'method': result.get('method', 'skill')
+                        })
+                        print(f"  Created plan: {plan_path.name}")
+                        return plan_path
+                    if plan_content:
+                        print(f"  [Skill] Plan generated via task_planning skill (method: {result.get('method', 'template')})")
+                    else:
+                        plan_content = None
+            except Exception as e:
+                print(f"  [Skill] Plan skill failed: {e}, using template")
+
+        # Fallback to template
+        if not plan_content:
             print(f"  Creating template plan...")
             template_func = self.plan_templates.get(task_type, self._default_plan_template)
             plan_content = template_func(task_file, task_data)
@@ -289,7 +283,7 @@ Generate your complete analysis and plan now:
             'task_file': task_file.name,
             'plan_file': plan_name,
             'task_type': task_type,
-            'method': ai_result.get('method', 'template') if AI_AVAILABLE else 'template'
+            'method': 'template'  # Always template fallback
         })
 
         print(f"  Created plan: {plan_name}")

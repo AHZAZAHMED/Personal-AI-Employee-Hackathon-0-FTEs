@@ -1,0 +1,32 @@
+{
+  "name": "email_generate_response",
+  "description": "Generate a professional email response for an incoming email. Use this when you need to draft a reply to an email, create an auto-response, or generate context-aware email content. Falls back to a template if AI is unavailable.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "from_email": {
+        "type": "string",
+        "description": "Sender's email address (e.g., 'john@example.com' or 'John Smith <john@example.com>')"
+      },
+      "subject": {
+        "type": "string",
+        "description": "Email subject line"
+      },
+      "body": {
+        "type": "string",
+        "description": "Email body content"
+      },
+      "date": {
+        "type": "string",
+        "description": "Email date (optional)",
+        "default": ""
+      },
+      "vault_path": {
+        "type": "string",
+        "description": "Path to AI Employee Vault (default: 'AI_Employee_Vault')",
+        "default": "AI_Employee_Vault"
+      }
+    },
+    "required": ["from_email", "subject", "body"]
+  }
+}

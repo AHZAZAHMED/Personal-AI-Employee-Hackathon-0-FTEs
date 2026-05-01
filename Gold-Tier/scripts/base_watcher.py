@@ -24,7 +24,7 @@ class BaseWatcher(ABC):
     def __init__(self, vault_path: str, check_interval: int = 60, dry_run: bool = False):
         """
         Initialize the watcher.
-        
+
         Args:
             vault_path: Path to the Obsidian vault root
             check_interval: Seconds between checks (default: 60)
@@ -36,18 +36,23 @@ class BaseWatcher(ABC):
         self.logs_dir = self.vault_path / 'Logs'
         self.check_interval = check_interval
         self.dry_run = dry_run
-        
+
         # Ensure directories exist
         self.needs_action.mkdir(parents=True, exist_ok=True)
         self.inbox.mkdir(parents=True, exist_ok=True)
         self.logs_dir.mkdir(parents=True, exist_ok=True)
-        
+
+        # Heartbeat directory for watchdog monitoring
+        self.heartbeat_dir = self.logs_dir / 'heartbeats'
+        self.heartbeat_dir.mkdir(parents=True, exist_ok=True)
+        self.heartbeat_file = self.heartbeat_dir / f'{self.__class__.__name__}.heartbeat'
+
         # Set up logging
         self._setup_logging()
-        
+
         # Track processed items to avoid duplicates
         self.processed_ids: set = set()
-        
+
         # Statistics
         self.stats = {
             'items_processed': 0,
@@ -170,7 +175,7 @@ class BaseWatcher(ABC):
     def log_action(self, action_type: str, details: Dict[str, Any]):
         """
         Log an action to the vault's log system.
-        
+
         Args:
             action_type: Type of action (created, skipped, error, etc.)
             details: Dictionary of action details
@@ -181,7 +186,7 @@ class BaseWatcher(ABC):
             'action_type': action_type,
             **details
         }
-        
+
         if self.dry_run:
             self.logger.info(f"[DRY RUN] Would log: {log_entry}")
         else:
@@ -190,6 +195,17 @@ class BaseWatcher(ABC):
             with open(log_file, 'a') as f:
                 import json
                 f.write(json.dumps(log_entry) + '\n')
+
+    def _write_heartbeat(self):
+        """
+        Write heartbeat file for watchdog monitoring.
+
+        The watchdog checks these files to ensure watchers are still running.
+        """
+        try:
+            self.heartbeat_file.write_text(datetime.now().isoformat())
+        except Exception as e:
+            self.logger.warning(f"Failed to write heartbeat: {e}")
     
     def run(self):
         """
@@ -206,12 +222,15 @@ class BaseWatcher(ABC):
         try:
             while True:
                 try:
+                    # Write heartbeat for watchdog monitoring
+                    self._write_heartbeat()
+
                     # Check for new items
                     items = self.check_for_updates()
-                    
+
                     if items:
                         self.logger.info(f"Found {len(items)} new item(s)")
-                        
+
                         for item in items:
                             try:
                                 filepath = self.create_action_file(item)
@@ -220,17 +239,17 @@ class BaseWatcher(ABC):
                                     self.logger.info(f"Created action file: {filepath.name}")
                                 else:
                                     self.logger.info(f"[DRY RUN] Would create action file")
-                                
+
                                 self.stats['items_processed'] += 1
-                                
+
                             except Exception as e:
                                 self.logger.error(f"Error creating action file: {e}")
                                 self.stats['errors'] += 1
                                 self.log_action('error', {'item': str(item), 'error': str(e)})
-                    
+
                     # Wait before next check
                     time.sleep(self.check_interval)
-                    
+
                 except KeyboardInterrupt:
                     raise
                 except Exception as e:

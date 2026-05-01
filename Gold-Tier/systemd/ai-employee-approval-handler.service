@@ -1,0 +1,36 @@
+[Unit]
+Description=AI Employee Approval Handler - Process approved actions
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+Group=YOUR_GROUP
+WorkingDirectory=/path/to/Personal-AI-Employee-Hackathon-0-FTEs/Gold-Tier
+Environment="PATH=/usr/bin:/usr/local/bin"
+ExecStart=/usr/bin/python3 scripts/approval_handler.py --vault AI_Employee_Vault --loop --interval 30
+
+# Auto-restart configuration
+Restart=always
+RestartSec=10
+StartLimitBurst=5
+StartLimitIntervalSec=300
+
+# Resource limits (optional)
+# MemoryLimit=256M
+# CPUQuota=25%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ai-employee-approval-handler
+
+# Security hardening (optional)
+# NoNewPrivileges=true
+# PrivateTmp=true
+# ProtectSystem=strict
+# ProtectHome=read-only
+# ReadWritePaths=/path/to/AI_Employee_Vault
+
+[Install]
+WantedBy=multi-user.target

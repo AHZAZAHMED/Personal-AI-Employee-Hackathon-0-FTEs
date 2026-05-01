@@ -1,17 +1,20 @@
 """
-Orchestrator for AI Employee - Silver Tier
+Orchestrator for AI Employee - Gold Tier
 
 Main coordination script that:
 1. Monitors /Needs_Action folder for new tasks
-2. Creates Plan.md files for complex tasks
+2. Creates Plan.md files for complex tasks via Skill Registry
 3. Requests approval for sensitive actions
-4. Executes approved actions via Approval Handler
+4. Executes approved actions via dynamic skill dispatch
 5. Updates Dashboard.md with current status
 
-Silver Tier Features:
+Gold Tier Features:
+- Dynamic Skill Registry (auto-discovers skills/)
 - Plan generation
-- Approval workflow
+- Approval workflow with correlation IDs
 - Email sending after approval
+- Skill-based task routing
+- Structured audit logging
 """
 
 import json
@@ -24,23 +27,19 @@ from typing import List, Dict, Any
 sys.path.insert(0, str(Path(__file__).parent))
 from approval_handler import ApprovalHandler
 from plan_generator import PlanGenerator
+from audit_logger import get_audit_logger
+from file_locking import try_lock
 
-# Try to import email sender and AI generator
+# Import Gold Tier Skill Registry (dynamic discovery)
 try:
-    from email_sender_mcp import execute_approved_email
-    EMAIL_AVAILABLE = True
-except:
-    EMAIL_AVAILABLE = False
-
-try:
-    from qwen_ai_integration import generate_ai_response
-    AI_AVAILABLE = True
-except:
-    AI_AVAILABLE = False
+    from skill_registry import SkillRegistry
+    SKILL_REGISTRY_AVAILABLE = True
+except ImportError:
+    SKILL_REGISTRY_AVAILABLE = False
 
 
 class Orchestrator:
-    """Main orchestrator for AI Employee - Silver Tier."""
+    """Main orchestrator for AI Employee - Gold Tier."""
     
     def __init__(self, vault_path: str):
         self.vault = Path(vault_path)
@@ -67,6 +66,21 @@ class Orchestrator:
         # Initialize Silver Tier handlers
         self.approval_handler = ApprovalHandler(str(vault_path))
         self.plan_generator = PlanGenerator(str(vault_path))
+
+        # Initialize audit logger
+        self.audit_logger = get_audit_logger(str(vault_path))
+
+        # Initialize Gold Tier Skill Registry (dynamic discovery)
+        self.skill_registry = None
+        if SKILL_REGISTRY_AVAILABLE:
+            try:
+                skills_dir = Path(__file__).parent.parent / 'skills'
+                self.skill_registry = SkillRegistry(skills_dir=str(skills_dir))
+                count = self.skill_registry.discover()
+                print(f"  Skill Registry: {count} skills discovered")
+            except Exception as e:
+                print(f"  Warning: Skill Registry init failed: {e}")
+                self.skill_registry = None
 
         # Statistics
         self.stats = {
@@ -99,24 +113,49 @@ class Orchestrator:
     def process_task(self, task_file: Path) -> Dict[str, Any]:
         """
         Process a single task with Silver Tier features.
-        
+
         Args:
             task_file: Path to task file
-            
+
         Returns:
             Processing result
         """
         content = task_file.read_text(encoding='utf-8')
         task_data = self._parse_frontmatter(content)
-        
+
         task_type = task_data.get('type', 'unknown')
         priority = task_data.get('priority', 'normal')
-        
+
+        # Generate correlation ID for this task
+        correlation_id = self.audit_logger.generate_correlation_id()
+
         print(f"\nProcessing: {task_file.name}")
         print(f"  Type: {task_type}")
         print(f"  Priority: {priority}")
-        
-        result = {'success': False, 'action': 'none'}
+        print(f"  Correlation ID: {correlation_id}")
+
+        # Log task creation
+        self.audit_logger.log_task_created(
+            correlation_id=correlation_id,
+            task_type=task_type,
+            task_data={
+                'task_id': task_file.name,
+                'priority': priority,
+                'from': task_data.get('from', ''),
+                'subject': task_data.get('subject', ''),
+                'filename': task_file.name
+            },
+            source='needs_action'
+        )
+
+        # Log task processing started
+        self.audit_logger.log_task_processing_started(
+            correlation_id=correlation_id,
+            task_id=task_file.name,
+            task_type=task_type
+        )
+
+        result = {'success': False, 'action': 'none', 'correlation_id': correlation_id}
         
         # Step 1: Create Plan.md for complex tasks
         if task_type in ['email', 'email_reply', 'payment', 'social_media']:
@@ -129,13 +168,14 @@ class Orchestrator:
         requires_approval = self._requires_approval(task_type, task_data)
         
         if requires_approval:
-            # Create approval request
+            # Create approval request with correlation ID
             print(f"  Creating approval request...")
             approval_details = self._get_approval_details(task_type, task_data, content)
             approval_file = self.approval_handler.create_approval_request(
                 action_type=task_type,
                 details=approval_details,
-                description=f"Task from {task_file.name}"
+                description=f"Task from {task_file.name}",
+                correlation_id=correlation_id
             )
             self.stats['approvals_requested'] += 1
             result['action'] = 'approval_requested'
@@ -159,7 +199,7 @@ class Orchestrator:
         else:
             # Auto-approved - process directly
             print(f"  Auto-approved, processing...")
-            result = self._execute_task(task_file, task_data, content)
+            result = self._execute_task(task_file, task_data, content, correlation_id)
 
             # Update dashboard after completion
             self.update_dashboard()
@@ -246,7 +286,7 @@ Reference ID: {timestamp}
 This is an automated response. For urgent matters, please reply with "URGENT" in the subject line."""
     
     def _get_approval_details(self, task_type: str, task_data: Dict, content: str) -> Dict[str, Any]:
-        """Extract details for approval request using AI analysis."""
+        """Extract details for approval request using skill-based AI analysis."""
         details = {
             'task_type': task_type,
             'priority': task_data.get('priority', 'normal'),
@@ -256,33 +296,43 @@ This is an automated response. For urgent matters, please reply with "URGENT" in
             # Extract email fields
             sender_email = task_data.get('from', 'Unknown')
 
-            details['to'] = sender_email  # Reply TO the sender
+            details['to'] = sender_email
             details['from_email'] = sender_email
             details['subject'] = f"Re: {task_data.get('subject', 'No Subject')}"
             details['gmail_id'] = task_data.get('gmail_id', '')
             details['original_subject'] = task_data.get('subject', '')
             details['risk_level'] = 'medium'
 
-            # Generate intelligent draft reply using AI
-            print(f"  [AI] Analyzing email and generating response...")
+            # Generate draft reply using email_responder skill
+            print(f"  [Skill] Generating email response via skill...")
 
-            if AI_AVAILABLE:
-                # Use Qwen Code AI to generate intelligent response
-                ai_result = generate_ai_response(task_data, str(self.vault))
+            # Extract clean email body from task_data
+            email_body = task_data.get('body', '')
+            if not email_body:
+                if '## Email Content' in content:
+                    email_body = content.split('## Email Content')[1].split('##')[0].strip()
+                elif '## Content' in content:
+                    email_body = content.split('## Content')[1].split('##')[0].strip()
 
-                if ai_result.get('success'):
-                    details['draft_body'] = ai_result['response']
-                    details['ai_analysis'] = ai_result.get('analysis', {})
-                    print(f"  [AI] ✅ AI-generated intelligent response")
-                    print(f"  [AI] Category: {ai_result.get('analysis', {}).get('category', 'general')}")
-                    print(f"  [AI] Urgency: {ai_result.get('analysis', {}).get('urgency', 'normal')}")
+            if self.skill_registry:
+                result = self.skill_registry.dispatch_by_task_type(
+                    'email',
+                    from_email=sender_email,
+                    subject=task_data.get('subject', ''),
+                    body=email_body,
+                    vault_path=str(self.vault)
+                )
+                if result.get('success') and result.get('response'):
+                    # Sanitize Unicode from Claude response
+                    from claude_ai_integration import sanitize_unicode
+                    details['draft_body'] = sanitize_unicode(result['response'])
+                    details['method'] = result.get('method', 'skill')
+                    print(f"  [Skill] [OK] Response generated via skill (method: {result.get('method')})")
                 else:
-                    # Fallback to smart template
-                    print(f"  [AI] ⚠️  AI failed, using smart template")
+                    print(f"  [Skill] [WARN] Skill returned without response, using template")
                     details['draft_body'] = self._generate_fallback_email(task_data)
             else:
-                # AI not available, use smart template
-                print(f"  [INFO] AI not available, using smart template")
+                print(f"  [INFO] No skill registry, using smart template")
                 details['draft_body'] = self._generate_fallback_email(task_data)
 
         elif task_type == 'payment':
@@ -300,16 +350,80 @@ This is an automated response. For urgent matters, please reply with "URGENT" in
 
         return details
     
-    def _execute_task(self, task_file: Path, task_data: Dict, content: str) -> Dict[str, Any]:
-        """Execute an auto-approved task."""
+    def _execute_task(self, task_file: Path, task_data: Dict, content: str,
+                      correlation_id: str = "") -> Dict[str, Any]:
+        """Execute an auto-approved task — uses skill registry ONLY."""
         task_type = task_data.get('type', 'unknown')
 
-        # Add completion metadata
+        if self.skill_registry:
+            print(f"  Dispatching via Skill Registry: task_type='{task_type}'")
+
+            # Pass all task_data fields plus vault_path and correlation_id
+            # This allows each skill to receive the parameters it needs
+            kwargs = dict(task_data)
+            kwargs['vault_path'] = str(self.vault)
+            kwargs['correlation_id'] = correlation_id
+
+            # Remove task_type from kwargs to avoid duplicate argument error
+            kwargs.pop('task_type', None)
+            kwargs.pop('type', None)
+            kwargs.pop('status', None)
+            kwargs.pop('created_at', None)
+
+            # Also add common aliases for backward compatibility
+            if 'from' in task_data and 'from_email' not in kwargs:
+                kwargs['from_email'] = task_data['from']
+            if 'body' not in kwargs and 'content' in task_data:
+                kwargs['body'] = task_data['content']
+            # For email_to_invoice skill
+            if 'body' in task_data and 'email_content' not in kwargs:
+                kwargs['email_content'] = task_data['body']
+
+            result = self.skill_registry.dispatch_by_task_type(task_type, **kwargs)
+            if result.get('success'):
+                print(f"  [OK] Skill executed: {task_type} -> success")
+
+                # Log task completion
+                if correlation_id:
+                    self.audit_logger.log_task_completed(
+                        correlation_id=correlation_id,
+                        task_id=task_file.name,
+                        result='success',
+                        metadata={'task_type': task_type}
+                    )
+
+                return self._mark_task_complete(task_file, task_data, content,
+                                               f"Executed via Skill Registry: {task_type}",
+                                               str(result), correlation_id)
+            else:
+                print(f"  [WARN] Skill failed: {result.get('error', 'unknown')}")
+
+                # Log task failure
+                if correlation_id:
+                    self.audit_logger.log_task_completed(
+                        correlation_id=correlation_id,
+                        task_id=task_file.name,
+                        result='failed',
+                        metadata={'task_type': task_type, 'error': result.get('error', 'unknown')}
+                    )
+
+        print(f"  No skill/handler for task type '{task_type}', marking complete")
+        return self._mark_task_complete(task_file, task_data, content,
+                                        f"No skill registered (type: {task_type})",
+                                        "", correlation_id)
+
+    def _mark_task_complete(self, task_file: Path, task_data: Dict, content: str,
+                            action_desc: str, result_str: str, correlation_id: str = "") -> Dict[str, Any]:
+        """Mark a task as complete — moved to Done/."""
+        task_type = task_data.get('type', 'unknown')
+
         completion_block = f"""
 ---
 completed: {datetime.now().isoformat()}
 completion_status: success
-processed_by: Orchestrator (Silver Tier)
+processed_by: Orchestrator (Gold Tier)
+action: {action_desc}
+correlation_id: {correlation_id}
 ---
 
 ## Processing Summary
@@ -317,14 +431,15 @@ processed_by: Orchestrator (Silver Tier)
 **Completed:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 **Status:** Success
 **Type:** {task_type}
+**Action:** {action_desc}
+**Correlation ID:** {correlation_id}
+"""
+        if result_str:
+            completion_block += f"\n**Result:**\n```\n{result_str[:500]}\n```\n"
 
-**Actions:**
-- Read and analyzed content
-- Categorized task
-- No approval required
-
+        completion_block += f"""
 ---
-*AI Employee Orchestrator v0.2.0 (Silver Tier)*
+*AI Employee Orchestrator v1.0.0 (Gold Tier)*
 """
         content += completion_block
 
@@ -334,7 +449,7 @@ processed_by: Orchestrator (Silver Tier)
         dest_path = self.done / new_name
         dest_path.write_text(content, encoding='utf-8')
         task_file.unlink()
-        
+
         # Clean up associated plan file if exists
         plan_prefix = task_file.stem.replace('EMAIL_', 'PLAN_EMAIL_').replace('FILE_', 'PLAN_FILE_')
         plan_files = list(self.plans.glob(f'{plan_prefix}*.md'))
@@ -345,28 +460,66 @@ processed_by: Orchestrator (Silver Tier)
             except Exception as e:
                 self.logger.debug(f"Could not clean up plan: {e}")
 
-        print(f"  ✓ Completed → {new_name}")
+        print(f"  [DONE] Completed -> {new_name}")
+
+        # Emit completion signal for Ralph Wiggum loop detection
+        print("TASK_COMPLETE")
 
         return {'success': True, 'action': 'completed', 'destination': str(dest_path)}
     
     def process_approved_actions(self):
-        """Process actions that have been approved."""
-        if not EMAIL_AVAILABLE:
-            print("  Email sender not available")
-            return
+        """Process actions that have been approved — uses skill registry ONLY."""
+        # Import approval token manager
+        from approval_tokens import get_token_manager
+        token_manager = get_token_manager(str(self.vault))
 
-        # Define executor callback
-        def executor(action_type, metadata, content):
-            # Handle email types
-            if action_type in ['email', 'email_send', 'email_reply']:
-                return execute_approved_email(action_type, metadata, content)
-            return {'success': True}
+        def executor(action_type, metadata, content, correlation_id="", approver="", approval_time=""):
+            if self.skill_registry:
+                # Generate approval token for this action
+                approval_token = token_manager.generate_token(
+                    action_type=action_type,
+                    metadata={
+                        'to': metadata.get('to', ''),
+                        'subject': metadata.get('subject', ''),
+                        'approved_at': approval_time or datetime.now().isoformat(),
+                        'approved_by': approver or 'human',
+                        'correlation_id': correlation_id
+                    },
+                    expires_hours=1,  # Short expiration for approved actions
+                    single_use=True
+                )
 
-        # Process approved actions
+                # For email approvals, route to email_send to actually send the draft
+                if action_type in ['email', 'email_reply', 'email_send']:
+                    return self.skill_registry.dispatch_by_task_type(
+                        'email_send',
+                        to=metadata.get('to', ''),
+                        subject=metadata.get('subject', ''),
+                        body=metadata.get('draft_body', metadata.get('body', '')),
+                        in_reply_to=metadata.get('gmail_id', ''),
+                        approval_token=approval_token,
+                        correlation_id=correlation_id,
+                        approver=approver,
+                        approval_time=approval_time,
+                        vault_path=str(self.vault)
+                    )
+                # For other types, use standard routing
+                return self.skill_registry.dispatch_by_task_type(
+                    action_type,
+                    from_email=metadata.get('from_email', metadata.get('to', '')),
+                    subject=metadata.get('subject', ''),
+                    body=metadata.get('draft_body', metadata.get('body', '')),
+                    to=metadata.get('to', ''),
+                    approval_token=approval_token,
+                    correlation_id=correlation_id,
+                    approver=approver,
+                    approval_time=approval_time,
+                    vault_path=str(self.vault)
+                )
+            return {'success': False, 'error': 'No skill registry available'}
+
         stats = self.approval_handler.process_approved_actions(executor)
         self.stats['approvals_executed'] += stats.get('executed', 0)
-        
-        # Update dashboard after processing approved actions
         self.update_dashboard()
     
     def run_cycle(self):
@@ -375,30 +528,38 @@ processed_by: Orchestrator (Silver Tier)
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger('Orchestrator')
         
-        self.logger.info("Starting Silver Tier orchestration cycle")
+        self.logger.info("Starting Gold Tier orchestration cycle")
         
         # Step 1: Get pending tasks
         pending_tasks = self.get_pending_tasks()
         
         if pending_tasks:
             self.logger.info(f"Found {len(pending_tasks)} pending task(s)")
-            
+
             # Step 2: Process each task (BEFORE moving)
             for task in pending_tasks:
-                try:
-                    # Process FIRST (creates plan, approval request, or executes)
-                    # process_task now moves the file internally when needed
-                    result = self.process_task(task)
-                    self.stats['tasks_processed'] += 1
+                # Use file locking to prevent concurrent processing
+                lock_id = f"task_{task.name}"
 
-                    # Move to in_progress only if file still exists and wasn't moved internally
-                    # (e.g., for auto-approved tasks that don't create approval requests)
-                    if task.exists() and result.get('action') != 'approval_requested':
-                        self.move_to_in_progress(task)
+                with try_lock(lock_id, timeout=0, vault_path=str(self.vault)) as locked:
+                    if not locked:
+                        self.logger.info(f"Task {task.name} is locked by another process, skipping")
+                        continue
 
-                except Exception as e:
-                    self.logger.error(f"Error processing {task.name}: {e}")
-                    self.stats['errors'] += 1
+                    try:
+                        # Process FIRST (creates plan, approval request, or executes)
+                        # process_task now moves the file internally when needed
+                        result = self.process_task(task)
+                        self.stats['tasks_processed'] += 1
+
+                        # Move to in_progress only if file still exists and wasn't moved internally
+                        # (e.g., for auto-approved tasks that don't create approval requests)
+                        if task.exists() and result.get('action') != 'approval_requested':
+                            self.move_to_in_progress(task)
+
+                    except Exception as e:
+                        self.logger.error(f"Error processing {task.name}: {e}")
+                        self.stats['errors'] += 1
         else:
             self.logger.info("No pending tasks")
         
@@ -512,17 +673,13 @@ processed_by: Orchestrator (Silver Tier)
         self.logger.info("Dashboard updated")
     
     def _update_stat(self, content: str, label: str, value: int) -> str:
-        """Update a stat value in dashboard."""
-        lines = content.split('\n')
-        new_lines = []
-        
-        for line in lines:
-            if f'| {label} |' in line:
-                new_lines.append(f'| {label} | {value} |')
-            else:
-                new_lines.append(line)
-        
-        return '\n'.join(new_lines)
+        """Update a stat value in dashboard Quick Stats table."""
+        import re
+        # Match the row: | Pending Tasks | 0     | → | Pending Tasks | 5     |
+        pattern = rf'(\|\s*{re.escape(label)}\s*\|)\s*\S+\s*(\|)'
+        replacement = rf'\g<1> {value} \g<2>'
+        content = re.sub(pattern, replacement, content)
+        return content
     
     def _is_today(self, filepath: Path) -> bool:
         """Check if file was modified today."""

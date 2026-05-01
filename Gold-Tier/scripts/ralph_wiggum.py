@@ -46,11 +46,12 @@ class RalphWiggumLoop:
         max_iterations: int = 10,
         timeout: int = 300,
         completion_promise: str = "TASK_COMPLETE",
-        check_done_folder: bool = True
+        check_done_folder: bool = True,
+        claude_command: Optional[str] = None
     ):
         """
         Initialize Ralph Wiggum Loop.
-        
+
         Args:
             vault_path: Path to Obsidian vault
             prompt: Task prompt for Claude Code
@@ -58,6 +59,7 @@ class RalphWiggumLoop:
             timeout: Timeout per iteration in seconds
             completion_promise: Text that signals completion
             check_done_folder: Check /Done/ folder for completion
+            claude_command: Claude Code command (default: auto-detect or use CLAUDE_CODE_PATH env var)
         """
         self.vault = Path(vault_path)
         self.prompt = prompt
@@ -65,20 +67,30 @@ class RalphWiggumLoop:
         self.timeout = timeout
         self.completion_promise = completion_promise
         self.check_done_folder = check_done_folder
-        
+
         # Folders
         self.needs_action = self.vault / 'Needs_Action'
         self.done = self.vault / 'Done'
-        
+
         # State
         self.iteration = 0
         self.start_time = datetime.now()
-        
+
+        # Progress tracking for loop protection
+        self.progress_history = []
+        self.stuck_threshold = 3  # Number of iterations with no progress before considering stuck
+
+        # Exponential backoff settings
+        self.min_delay = 2  # Minimum delay in seconds
+        self.max_delay = 60  # Maximum delay in seconds
+        self.backoff_multiplier = 1.5  # Multiplier for exponential backoff
+        self.current_delay = self.min_delay
+
         # Setup logging
         self._setup_logging()
-        
+
         # Find Claude Code
-        self.claude_path = self._find_claude_code()
+        self.claude_path = claude_command or self._find_claude_code()
     
     def _setup_logging(self):
         """Setup logging configuration."""
@@ -98,6 +110,17 @@ class RalphWiggumLoop:
     
     def _find_claude_code(self) -> Optional[str]:
         """Find Claude Code executable."""
+        import os
+
+        # Check environment variable first
+        env_path = os.getenv('CLAUDE_CODE_PATH')
+        if env_path:
+            if shutil.which(env_path):
+                self.logger.info(f"Found Claude Code from CLAUDE_CODE_PATH: {env_path}")
+                return env_path
+            else:
+                self.logger.warning(f"CLAUDE_CODE_PATH set but command not found: {env_path}")
+
         # Try common locations
         possible_paths = [
             'claude',
@@ -105,14 +128,14 @@ class RalphWiggumLoop:
             'qwen',  # If using Qwen Code
             'qwen-code'
         ]
-        
+
         for cmd in possible_paths:
             path = shutil.which(cmd)
             if path:
                 self.logger.info(f"Found Claude Code at: {path}")
                 return path
-        
-        self.logger.warning("Claude Code not found in PATH")
+
+        self.logger.warning("Claude Code not found in PATH. Set CLAUDE_CODE_PATH environment variable.")
         return None
     
     def _count_files(self, folder: Path) -> int:
@@ -146,7 +169,65 @@ class RalphWiggumLoop:
                 return True
         
         return False
-    
+
+    def _track_progress(self, needs_action_count: int, done_count: int) -> bool:
+        """
+        Track progress and detect if we're stuck.
+
+        Args:
+            needs_action_count: Current count in Needs_Action
+            done_count: Current count in Done
+
+        Returns:
+            True if progress was made, False if stuck
+        """
+        current_state = {
+            'iteration': self.iteration,
+            'needs_action': needs_action_count,
+            'done': done_count,
+            'timestamp': datetime.now()
+        }
+
+        self.progress_history.append(current_state)
+
+        # Check if we're stuck (no progress in last N iterations)
+        if len(self.progress_history) >= self.stuck_threshold:
+            recent_history = self.progress_history[-self.stuck_threshold:]
+
+            # Check if needs_action and done counts haven't changed
+            needs_action_values = [h['needs_action'] for h in recent_history]
+            done_values = [h['done'] for h in recent_history]
+
+            if len(set(needs_action_values)) == 1 and len(set(done_values)) == 1:
+                self.logger.warning(
+                    f"No progress detected in last {self.stuck_threshold} iterations. "
+                    f"Needs_Action={needs_action_values[0]}, Done={done_values[0]}"
+                )
+                return False
+
+        return True
+
+    def _calculate_backoff_delay(self, progress_made: bool) -> float:
+        """
+        Calculate delay using exponential backoff.
+
+        Args:
+            progress_made: Whether progress was made in last iteration
+
+        Returns:
+            Delay in seconds
+        """
+        if progress_made:
+            # Progress made - reduce delay (faster iterations)
+            self.current_delay = max(self.min_delay, self.current_delay / self.backoff_multiplier)
+            self.logger.info(f"Progress detected - reducing delay to {self.current_delay:.1f}s")
+        else:
+            # No progress - increase delay (slower iterations)
+            self.current_delay = min(self.max_delay, self.current_delay * self.backoff_multiplier)
+            self.logger.info(f"No progress - increasing delay to {self.current_delay:.1f}s")
+
+        return self.current_delay
+
     def _run_claude_iteration(self, iteration: int) -> bool:
         """
         Run one iteration of Claude Code.
@@ -252,31 +333,54 @@ class RalphWiggumLoop:
         
         # Run loop
         completion_detected = False
-        
+        stuck_detected = False
+
         for iteration in range(1, self.max_iterations + 1):
             self.iteration = iteration
-            
+
+            # Get current state before iteration
+            pre_needs_action = self._count_files(self.needs_action)
+            pre_done = self._count_files(self.done)
+
             # Run iteration
             completion_detected = self._run_claude_iteration(iteration)
-            
+
+            # Get current state after iteration
+            post_needs_action = self._count_files(self.needs_action)
+            post_done = self._count_files(self.done)
+
+            # Track progress
+            progress_made = (post_needs_action < pre_needs_action) or (post_done > pre_done)
+            is_stuck = not self._track_progress(post_needs_action, post_done)
+
+            # Check if we're stuck
+            if is_stuck:
+                self.logger.error("=" * 60)
+                self.logger.error("STUCK DETECTED - No progress in multiple iterations")
+                self.logger.error("=" * 60)
+                stuck_detected = True
+                break
+
             # Check if task is complete
             if self._is_task_complete(initial_needs_action):
                 self.logger.info("=" * 60)
-                self.logger.info("✓ TASK COMPLETE!")
+                self.logger.info("[OK] TASK COMPLETE!")
                 self.logger.info("=" * 60)
                 break
-            
+
             # Check if Claude signaled completion
             if completion_detected:
                 self.logger.info("=" * 60)
-                self.logger.info("✓ COMPLETION PROMISE DETECTED!")
+                self.logger.info("[OK] COMPLETION PROMISE DETECTED!")
                 self.logger.info("=" * 60)
                 break
-            
+
             # Check if we should continue
             if iteration < self.max_iterations:
-                self.logger.info(f"Task not complete. Continuing to iteration {iteration + 1}...")
-                time.sleep(2)  # Brief pause between iterations
+                # Calculate delay with exponential backoff
+                delay = self._calculate_backoff_delay(progress_made)
+                self.logger.info(f"Task not complete. Waiting {delay:.1f}s before iteration {iteration + 1}...")
+                time.sleep(delay)
         
         # Calculate statistics
         final_needs_action = self._count_files(self.needs_action)
@@ -286,22 +390,24 @@ class RalphWiggumLoop:
         # Determine success
         success = (
             completion_detected or
-            final_needs_action < initial_needs_action or
-            final_done > initial_done
-        )
-        
+            (final_needs_action < initial_needs_action) or
+            (final_done > initial_done)
+        ) and not stuck_detected
+
         result = {
             'success': success,
             'iterations': self.iteration,
-            'elapsed_seconds': elapsed_time,
+            'elapsed_time': elapsed_time,
             'initial_needs_action': initial_needs_action,
             'final_needs_action': final_needs_action,
             'initial_done': initial_done,
             'final_done': final_done,
             'tasks_completed': final_done - initial_done,
-            'completion_promise_detected': completion_detected
+            'completion_detected': completion_detected,
+            'stuck_detected': stuck_detected,
+            'progress_history': self.progress_history
         }
-        
+
         # Log final statistics
         self.logger.info("=" * 60)
         self.logger.info("RALPH WIGGUM LOOP - FINAL STATISTICS")
@@ -329,9 +435,10 @@ def main():
     parser.add_argument('--timeout', type=int, default=300, help='Timeout per iteration (seconds)')
     parser.add_argument('--completion-promise', default='TASK_COMPLETE', help='Completion signal text')
     parser.add_argument('--no-check-done', action='store_true', help='Disable /Done/ folder checking')
-    
+    parser.add_argument('--claude-command', help='Claude Code command (default: auto-detect or use CLAUDE_CODE_PATH env var)')
+
     args = parser.parse_args()
-    
+
     # Create and run loop
     loop = RalphWiggumLoop(
         vault_path=args.vault,
@@ -339,11 +446,12 @@ def main():
         max_iterations=args.max_iterations,
         timeout=args.timeout,
         completion_promise=args.completion_promise,
-        check_done_folder=not args.no_check_done
+        check_done_folder=not args.no_check_done,
+        claude_command=args.claude_command
     )
-    
+
     result = loop.run()
-    
+
     # Exit with appropriate code
     sys.exit(0 if result['success'] else 1)
 

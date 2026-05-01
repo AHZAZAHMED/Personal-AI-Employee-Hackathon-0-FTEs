@@ -1,0 +1,25 @@
+{
+  "name": "instagram_check_comments",
+  "description": "Check Instagram Business Account for new comments, mentions, and engagement. Use this when you need to monitor your Instagram account for activity that may require a response.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "recent_posts_limit": {
+        "type": "integer",
+        "description": "Number of recent posts to check for comments (default: 5)",
+        "default": 5
+      },
+      "vault_path": {
+        "type": "string",
+        "description": "Path to AI Employee Vault (default: 'AI_Employee_Vault')",
+        "default": "AI_Employee_Vault"
+      },
+      "create_action_files": {
+        "type": "boolean",
+        "description": "Whether to create .md action files in Needs_Action/ (default: true)",
+        "default": true
+      }
+    },
+    "required": []
+  }
+}

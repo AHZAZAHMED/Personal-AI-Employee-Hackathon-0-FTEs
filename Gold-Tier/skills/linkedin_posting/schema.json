@@ -1,0 +1,24 @@
+{
+  "name": "linkedin_create_post_draft",
+  "description": "Create a LinkedIn post draft for human review and approval. Use this when you need to post a business update, announcement, or content to LinkedIn. The draft goes to Pending_Approval for human review before publishing.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "content": {
+        "type": "string",
+        "description": "The LinkedIn post content/text to publish"
+      },
+      "post_type": {
+        "type": "string",
+        "description": "Type of post (e.g., 'announcement', 'update', 'article', 'default')",
+        "default": "announcement"
+      },
+      "vault_path": {
+        "type": "string",
+        "description": "Path to AI Employee Vault (default: 'AI_Employee_Vault')",
+        "default": "AI_Employee_Vault"
+      }
+    },
+    "required": ["content"]
+  }
+}

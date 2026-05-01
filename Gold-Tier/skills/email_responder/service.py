@@ -22,6 +22,9 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_excep
 # Add scripts/ to path for AI integration
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 from claude_ai_integration import call_ai_model, call_claude
+from audit_logger import get_audit_logger
+from error_context import capture_error_context, log_error_with_context
+from idempotency import check_idempotency, record_operation
 
 logger = logging.getLogger(__name__)
 
@@ -45,8 +48,11 @@ class EmailResponseService:
         self.logs_dir = self.vault_path / "Logs"
         self.logs_dir.mkdir(parents=True, exist_ok=True)
         self.token_path = self.vault_path / ".gmail_token.json"
-        self.credentials_path = Path(__file__).parent.parent.parent / "credentails.json"
+        self.credentials_path = Path(__file__).parent.parent.parent / "credentials.json"
         self._gmail_service = None
+
+        # Initialize audit logger
+        self.audit_logger = get_audit_logger(str(vault_path))
 
     # ─── Response Generation ──────────────────────────────────────
 
@@ -351,12 +357,60 @@ This is an automated response. For urgent matters, please reply with "URGENT" in
         reraise=True
     )
     def send_email(self, to: str, subject: str, body: str,
-                   in_reply_to: Optional[str] = None) -> Dict[str, Any]:
-        """Send an email via Gmail API."""
+                   in_reply_to: Optional[str] = None,
+                   correlation_id: str = "",
+                   approver: str = "",
+                   approval_time: str = "") -> Dict[str, Any]:
+        """
+        Send an email via Gmail API with audit logging and idempotency.
+
+        Args:
+            to: Recipient email address
+            subject: Email subject
+            body: Email body
+            in_reply_to: Optional message ID for threading
+            correlation_id: Correlation ID for audit trail and idempotency
+            approver: Who approved this email
+            approval_time: When it was approved
+
+        Returns:
+            Dict with success status and message_id or error
+        """
+        # Check idempotency - return cached result if already sent
+        if correlation_id:
+            cached = check_idempotency(correlation_id, 'email_send', str(self.vault_path))
+            if cached:
+                logger.info(f"Idempotency hit: Email already sent for {correlation_id}")
+                return cached.get('result', {})
+
+        # Log action started
+        if correlation_id:
+            self.audit_logger.log_action_started(
+                correlation_id=correlation_id,
+                action_type='email_send',
+                actor='email_responder_skill',
+                approver=approver,
+                approval_time=approval_time,
+                metadata={'to': to, 'subject': subject}
+            )
+
         try:
             service = self._get_gmail_service()
             if not service:
-                return {"success": False, "error": "Gmail API not available or not authenticated"}
+                error = "Gmail API not available or not authenticated"
+
+                # Log failure
+                if correlation_id:
+                    self.audit_logger.log_action_failed(
+                        correlation_id=correlation_id,
+                        action_type='email_send',
+                        actor='email_responder_skill',
+                        error=error,
+                        approver=approver,
+                        approval_time=approval_time
+                    )
+
+                return {"success": False, "error": error}
 
             # Create MIME message
             mime_msg = MIMEText(body.replace("\n\n", "\r\n\r\n").replace("\n", " "), "plain", "utf-8")
@@ -369,12 +423,47 @@ This is an automated response. For urgent matters, please reply with "URGENT" in
             raw = base64.urlsafe_b64encode(mime_msg.as_bytes()).decode("utf-8")
             sent = service.users().messages().send(userId="me", body={"raw": raw}).execute()
 
+            # Log to old system (backward compatibility)
             self._log_event("email_sent", {"to": to, "subject": subject, "message_id": sent["id"]})
-            return {"success": True, "message_id": sent["id"], "method": "gmail_api"}
+
+            # Log to audit system with approval chain
+            if correlation_id:
+                self.audit_logger.log_email_sent(
+                    correlation_id=correlation_id,
+                    to=to,
+                    subject=subject,
+                    approver=approver,
+                    approval_time=approval_time,
+                    result='success'
+                )
+
+            result = {"success": True, "message_id": sent["id"], "method": "gmail_api"}
+
+            # Record successful operation for idempotency
+            if correlation_id:
+                record_operation(correlation_id, 'email_send', result, str(self.vault_path), ttl_hours=168)
+
+            return result
 
         except Exception as e:
             logger.error(f"Email send failed: {e}")
-            return {"success": False, "error": str(e)}
+
+            # Capture rich error context
+            error_context = capture_error_context(e, locals(), correlation_id)
+            log_error_with_context(error_context, str(self.vault_path))
+
+            # Log failure to audit system
+            if correlation_id:
+                self.audit_logger.log_action_failed(
+                    correlation_id=correlation_id,
+                    action_type='email_send',
+                    actor='email_responder_skill',
+                    error=str(e),
+                    approver=approver,
+                    approval_time=approval_time
+                )
+
+            return {"success": False, "error": str(e), "error_id": error_context['error_id']}
 
     @retry(
         stop=stop_after_attempt(3),

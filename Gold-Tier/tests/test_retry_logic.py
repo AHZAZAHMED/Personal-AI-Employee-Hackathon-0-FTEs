@@ -7,6 +7,9 @@ Verifies that retry decorators are properly applied to all modified skills.
 import sys
 from pathlib import Path
 
+# Add Gold-Tier directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 # Test imports
 print("=" * 70)
 print("TESTING RETRY LOGIC IMPLEMENTATION")

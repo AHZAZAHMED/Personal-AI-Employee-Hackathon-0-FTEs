@@ -10,7 +10,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from pathlib import Path
 
 # Configuration
-CREDENTIALS_FILE = Path('credentails.json')
+CREDENTIALS_FILE = Path('credentials.json')
 TOKEN_FILE = Path('AI_Employee_Vault/.gmail_token.json')
 
 # IMPORTANT: Include BOTH read AND send scopes

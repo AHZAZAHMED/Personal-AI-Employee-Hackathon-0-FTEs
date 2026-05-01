@@ -1,0 +1,35 @@
+{
+  "name": "odoo_create_invoice",
+  "description": "Create a customer invoice in Odoo accounting. Use this when you need to create an invoice for a customer, bill someone for services, or generate a vendor invoice.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "partner_name": {
+        "type": "string",
+        "description": "Customer/vendor name"
+      },
+      "partner_email": {
+        "type": "string",
+        "description": "Customer/vendor email address"
+      },
+      "lines": {
+        "type": "array",
+        "description": "Invoice lines, each with name, quantity, and price_unit (e.g., [{'name': 'Consulting', 'quantity': 10, 'price_unit': 50}])",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {"type": "string"},
+            "quantity": {"type": "number"},
+            "price_unit": {"type": "number"}
+          }
+        }
+      },
+      "invoice_type": {
+        "type": "string",
+        "description": "'out_invoice' for customer invoice or 'in_invoice' for vendor bill",
+        "default": "out_invoice"
+      }
+    },
+    "required": ["partner_name", "partner_email", "lines"]
+  }
+}

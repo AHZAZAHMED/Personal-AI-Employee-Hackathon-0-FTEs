@@ -66,10 +66,10 @@ class EmailSender:
             import base64
             from google.oauth2.credentials import Credentials
             from googleapiclient.discovery import build
-            
+
             token_path = self.vault / '.gmail_token.json'
-            credentials_path = Path(__file__).parent.parent / 'credentails.json'
-            
+            credentials_path = Path(__file__).parent.parent / 'credentials.json'
+
             # Authenticate with FULL permissions (read + send + compose)
             creds = None
             if token_path.exists():
@@ -153,37 +153,57 @@ Content-Transfer-Encoding: 7bit
 
 
 def execute_approved_email(action_type: str, metadata: Dict[str, Any],
-                           content: str) -> Dict[str, Any]:
-    """Callback for Approval Handler to execute email actions."""
+                           content: str, correlation_id: str = "",
+                           approver: str = "", approval_time: str = "",
+                           approval_token: str = None) -> Dict[str, Any]:
+    """
+    Callback for Approval Handler to execute email actions.
+
+    Now uses the email_responder skill with approval token for secure execution.
+    """
     print(f"    Executing email action: {action_type}")
-    
+
     if action_type not in ['email', 'email_send', 'email_reply']:
         return {'success': False, 'error': 'Not an email action'}
-    
+
     vault_path = Path(__file__).parent.parent / 'AI_Employee_Vault'
-    sender = EmailSender(str(vault_path))
-    
+
     to = metadata.get('to', '')
     subject = metadata.get('subject', '')
     draft_body = metadata.get('draft_body', '')
     gmail_id = metadata.get('gmail_id')
-    
+
     print(f"    To: {to}")
     print(f"    Subject: {subject}")
-    
+    print(f"    Using approval token: {approval_token[:16] if approval_token else 'None'}...")
+
     if not to or to == 'Unknown':
         return {'success': False, 'error': 'No recipient'}
-    
+
     if not draft_body:
         draft_body = f"Re: {subject}\n\n(Automated reply from AI Employee)"
-    
-    result = sender.send_email(to, subject, draft_body, gmail_id)
-    
+
+    # Use the email_responder skill with approval token
+    sys.path.insert(0, str(Path(__file__).parent.parent / 'skills' / 'email_responder'))
+    from skill import email_send
+
+    result = email_send(
+        to=to,
+        subject=subject,
+        body=draft_body,
+        vault_path=str(vault_path),
+        in_reply_to=gmail_id,
+        approval_token=approval_token,
+        correlation_id=correlation_id,
+        approver=approver,
+        approval_time=approval_time
+    )
+
     if result.get('success'):
         print(f"    [OK] Email sent successfully!")
     else:
         print(f"    [ERROR] Email failed: {result.get('error', 'Unknown error')}")
-    
+
     return result
 
 

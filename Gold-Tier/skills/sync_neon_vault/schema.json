@@ -1,0 +1,20 @@
+{
+  "name": "sync_neon_to_vault",
+  "description": "Sync unread WhatsApp messages from Neon PostgreSQL database to the AI Employee Vault Inbox. Use this when you need to bridge incoming WhatsApp messages from the database into the file-based AI Employee system for processing.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "limit": {
+        "type": "integer",
+        "description": "Maximum number of messages to sync (default: 100)",
+        "default": 100
+      },
+      "vault_path": {
+        "type": "string",
+        "description": "Path to AI Employee Vault (default: 'AI_Employee_Vault')",
+        "default": "AI_Employee_Vault"
+      }
+    },
+    "required": []
+  }
+}

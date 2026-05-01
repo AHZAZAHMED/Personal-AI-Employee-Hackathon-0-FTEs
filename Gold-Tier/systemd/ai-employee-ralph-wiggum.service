@@ -1,0 +1,37 @@
+[Unit]
+Description=AI Employee Ralph Wiggum - Autonomous task completion loop
+After=network.target
+Wants=ai-employee-orchestrator.service
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+Group=YOUR_GROUP
+WorkingDirectory=/path/to/Personal-AI-Employee-Hackathon-0-FTEs/Gold-Tier
+Environment="PATH=/usr/bin:/usr/local/bin"
+ExecStart=/usr/bin/python3 scripts/ralph_wiggum.py --vault AI_Employee_Vault --prompt "Process all pending tasks" --max-iterations 10
+
+# Auto-restart configuration
+Restart=on-failure
+RestartSec=30
+StartLimitBurst=3
+StartLimitIntervalSec=600
+
+# Resource limits (optional)
+# MemoryLimit=1G
+# CPUQuota=75%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ai-employee-ralph-wiggum
+
+# Security hardening (optional)
+# NoNewPrivileges=true
+# PrivateTmp=true
+# ProtectSystem=strict
+# ProtectHome=read-only
+# ReadWritePaths=/path/to/AI_Employee_Vault
+
+[Install]
+WantedBy=multi-user.target

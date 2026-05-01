@@ -1,0 +1,42 @@
+# Base Python image with all dependencies
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY scripts/ ./scripts/
+COPY skills/ ./skills/
+COPY tests/ ./tests/
+
+# Create vault directory structure
+RUN mkdir -p AI_Employee_Vault/Needs_Action \
+    AI_Employee_Vault/Pending_Approval \
+    AI_Employee_Vault/Approved \
+    AI_Employee_Vault/Done \
+    AI_Employee_Vault/Logs \
+    AI_Employee_Vault/Plans
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import sys; sys.exit(0)"
+
+# Default command (override in specific Dockerfiles)
+CMD ["python", "--version"]

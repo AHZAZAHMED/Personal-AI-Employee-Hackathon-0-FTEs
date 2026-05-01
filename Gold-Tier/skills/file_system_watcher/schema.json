@@ -1,0 +1,24 @@
+{
+  "name": "scan_watch_folder",
+  "description": "Scan a watched folder for new files and create action tasks in the vault. Use this when you need to process files dropped into a folder, handle downloaded attachments, or monitor export folders from other applications.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "watch_folder": {
+        "type": "string",
+        "description": "Path to the folder to monitor for new files"
+      },
+      "vault_path": {
+        "type": "string",
+        "description": "Path to AI Employee Vault (default: 'AI_Employee_Vault')",
+        "default": "AI_Employee_Vault"
+      },
+      "move_processed": {
+        "type": "boolean",
+        "description": "Whether to move processed files to Vault Inbox/ (default: true)",
+        "default": true
+      }
+    },
+    "required": ["watch_folder"]
+  }
+}

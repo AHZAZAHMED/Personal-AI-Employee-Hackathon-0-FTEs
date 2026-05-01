@@ -1,0 +1,25 @@
+{
+  "name": "generate_ceo_briefing",
+  "description": "Generate a weekly CEO briefing with executive summary, revenue analysis, completed tasks, bottlenecks, and proactive suggestions. Use this when you need a business overview, weekly report, or executive summary.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "days": {
+        "type": "integer",
+        "description": "Number of days to analyze (default: 7 for weekly)",
+        "default": 7
+      },
+      "vault_path": {
+        "type": "string",
+        "description": "Path to AI Employee Vault (default: 'AI_Employee_Vault')",
+        "default": "AI_Employee_Vault"
+      },
+      "save_to_file": {
+        "type": "boolean",
+        "description": "Whether to save the briefing to Briefings/ folder (default: true)",
+        "default": true
+      }
+    },
+    "required": []
+  }
+}

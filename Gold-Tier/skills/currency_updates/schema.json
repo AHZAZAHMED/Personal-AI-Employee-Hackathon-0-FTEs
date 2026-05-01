@@ -1,0 +1,15 @@
+{
+  "name": "update_currency_rates",
+  "description": "Fetch live currency exchange rates from the European Central Bank and update the system's currency conversion table. Use this when you need current exchange rates for multi-currency invoice processing or financial reporting.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "show_comparison": {
+        "type": "boolean",
+        "description": "Whether to include old vs new rate comparison in the result (default: false)",
+        "default": false
+      }
+    },
+    "required": []
+  }
+}

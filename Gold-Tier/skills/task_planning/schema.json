@@ -1,0 +1,27 @@
+{
+  "name": "create_task_plan",
+  "description": "Create a detailed action plan for a complex task. Use this when a task requires multiple steps, involves approvals, or needs structured breakdown before execution. Supports email replies, payments, social media posts, file processing, and general tasks.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "task_type": {
+        "type": "string",
+        "description": "Type of task (e.g., 'email', 'email_reply', 'payment', 'file_drop', 'social_media', 'default')"
+      },
+      "task_data": {
+        "type": "object",
+        "description": "Task metadata dictionary (from, subject, priority, is_urgent, amount, recipient, platform, etc.)"
+      },
+      "task_content": {
+        "type": "string",
+        "description": "Full content of the task file (markdown with frontmatter)"
+      },
+      "vault_path": {
+        "type": "string",
+        "description": "Path to AI Employee Vault (default: 'AI_Employee_Vault')",
+        "default": "AI_Employee_Vault"
+      }
+    },
+    "required": ["task_type", "task_data", "task_content"]
+  }
+}

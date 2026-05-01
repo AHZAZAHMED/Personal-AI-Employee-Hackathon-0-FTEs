@@ -1,0 +1,28 @@
+{
+  "name": "create_approval_request",
+  "description": "Create a human-in-the-loop approval request for sensitive actions like sending emails, making payments, or posting to social media. Use this when an AI action requires human review before execution.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "action_type": {
+        "type": "string",
+        "description": "Type of action requiring approval (e.g., 'email_reply', 'email_send', 'payment', 'social_post', 'invoice')"
+      },
+      "details": {
+        "type": "object",
+        "description": "Dictionary with action details (to, subject, draft_body, amount, recipient, platform, risk_level, etc.)"
+      },
+      "description": {
+        "type": "string",
+        "description": "Human-readable description of why approval is needed",
+        "default": ""
+      },
+      "vault_path": {
+        "type": "string",
+        "description": "Path to AI Employee Vault (default: 'AI_Employee_Vault')",
+        "default": "AI_Employee_Vault"
+      }
+    },
+    "required": ["action_type", "details"]
+  }
+}

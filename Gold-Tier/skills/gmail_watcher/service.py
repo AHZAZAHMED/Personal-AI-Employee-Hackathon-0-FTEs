@@ -60,7 +60,7 @@ class GmailService:
         if credentials_path:
             self.credentials_path = Path(credentials_path)
         else:
-            self.credentials_path = Path(__file__).parent.parent.parent / "credentails.json"
+            self.credentials_path = Path(__file__).parent.parent.parent / "credentials.json"
 
         self.token_path = self.vault_path / ".gmail_token.json"
         self.processed_ids_file = self.logs_dir / "gmail_processed_ids.json"
