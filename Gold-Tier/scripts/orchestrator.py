@@ -418,7 +418,7 @@ This is an automated response. For urgent matters, please reply with "URGENT" in
                         severity=AlertSeverity.ERROR,
                         title=f"Skill Execution Failed: {task_type}",
                         message=f"Task: {task_file.name}\nSkill: {task_type}\nError: {error_msg}",
-                        context={'task_file': task_file.name, 'task_type': task_type, 'error': error_msg}
+                        details={'task_file': task_file.name, 'task_type': task_type, 'error': error_msg}
                     )
                 except Exception as alert_error:
                     print(f"  [WARN] Failed to send alert: {alert_error}")
@@ -583,7 +583,7 @@ correlation_id: {correlation_id}
                                 severity=AlertSeverity.ERROR,
                                 title=f"Task Processing Error",
                                 message=f"Failed to process task: {task.name}\nError: {str(e)}",
-                                context={'task_file': task.name, 'error': str(e)}
+                                details={'task_file': task.name, 'error': str(e)}
                             )
                         except Exception as alert_error:
                             self.logger.error(f"Failed to send alert: {alert_error}")

@@ -124,7 +124,7 @@ class WatcherWatchdog:
                 severity=AlertSeverity.INFO,
                 title="Watcher Watchdog Started",
                 message=f"Monitoring system is now active.\n\nWatchers monitored: {len(self.watchers)}\nCheck interval: {check_interval}s\nAlert threshold: {alert_threshold} consecutive failures",
-                context={'watchers': list(self.watchers.keys()), 'check_interval': check_interval}
+                details={'watchers': list(self.watchers.keys()), 'check_interval': check_interval}
             )
         except Exception as e:
             self.logger.warning(f"Failed to send startup notification: {e}")
@@ -194,7 +194,7 @@ class WatcherWatchdog:
                 severity=AlertSeverity.CRITICAL,
                 title=alert_title,
                 message=alert_message,
-                context={'watcher': watcher_name, 'failures': watcher.consecutive_failures}
+                details={'watcher': watcher_name, 'failures': watcher.consecutive_failures}
             )
             self.logger.info(f"Alert sent successfully for {watcher_name}")
         except Exception as e:
